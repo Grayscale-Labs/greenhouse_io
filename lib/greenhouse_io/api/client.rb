@@ -3,7 +3,7 @@ module GreenhouseIo
     include HTTMultiParty
     include GreenhouseIo::API
 
-    PERMITTED_OPTIONS = [:page, :per_page, :job_id]
+    PERMITTED_OPTIONS = [:page, :per_page, :job_id, :updated_after, :created_after]
 
     attr_accessor :api_token, :rate_limit, :rate_limit_remaining, :link
     base_uri 'https://harvest.greenhouse.io/v1'
@@ -78,6 +78,10 @@ module GreenhouseIo
 
     def scheduled_interviews(id, options = {})
       get_from_harvest_api "/applications/#{id}/scheduled_interviews", options
+    end
+
+    def all_scheduled_interviews(id = nil, options = {})
+      get_from_harvest_api "/scheduled_interviews/#{id}", options
     end
 
     def jobs(id = nil, options = {})
