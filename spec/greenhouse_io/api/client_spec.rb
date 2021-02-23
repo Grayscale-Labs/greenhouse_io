@@ -63,22 +63,6 @@ describe GreenhouseIo::Client do
       end
     end
 
-    describe "#permitted_options" do
-      let(:options) { GreenhouseIo::Client::PERMITTED_OPTIONS + [:where] }
-
-      it "allows permitted options" do
-        output = @client.send(:permitted_options, options)
-        GreenhouseIo::Client::PERMITTED_OPTIONS.each do |option|
-          expect(output).to include(option)
-        end
-      end
-
-      it "discards non-permitted options" do
-        output = @client.send(:permitted_options, options)
-        expect(output).to_not include(:where)
-      end
-    end
-
     describe "#offices" do
       context "given no id" do
         before do
