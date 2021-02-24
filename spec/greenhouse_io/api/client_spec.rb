@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe GreenhouseIo::Client do
 
-  FAKE_API_TOKEN = '123FakeToken'
+  let(:fake_api_token) { '123FakeToken' }
 
   it "should have a base url for an API endpoint" do
     expect(GreenhouseIo::Client.base_uri).to eq("https://harvest.greenhouse.io/v1")
@@ -12,12 +14,12 @@ describe GreenhouseIo::Client do
 
     before do
       GreenhouseIo.configuration.symbolize_keys = true
-      @client = GreenhouseIo::Client.new(FAKE_API_TOKEN)
+      @client = GreenhouseIo::Client.new(fake_api_token)
     end
 
     describe "#initialize" do
       it "has an api_token" do
-        expect(@client.api_token).to eq(FAKE_API_TOKEN)
+        expect(@client.api_token).to eq(fake_api_token)
       end
 
       it "uses the configuration value when token is not specified" do
@@ -307,62 +309,54 @@ describe GreenhouseIo::Client do
       end
     end
 
-    describe "#applications" do
-      context "given no id" do
-        before do
-          VCR.use_cassette('client/applications') do
-            @applications = @client.applications
-          end
+    describe '#applications', vcr: { cassette_name: 'client/applications' }  do
+      let(:method_args) { [] }
+
+      subject(:applications) { @client.applications(*method_args) }
+
+      context 'given no id' do
+        it 'returns a response' do
+          expect(applications).to_not be_nil
         end
 
-        it "returns a response" do
-          expect(@applications).to_not be_nil
+        it 'returns an array of applications' do
+          expect(applications).to be_an_instance_of(Array)
         end
 
-        it "returns an array of applications" do
-          expect(@applications).to be_an_instance_of(Array)
-        end
-
-        it "returns application details" do
-          expect(@applications.first).to have_key(:person_id)
+        it 'returns application details' do
+          expect(applications.first).to have_key(:person_id)
         end
       end
 
-      context "given an id" do
-        before do
-          VCR.use_cassette('client/application') do
-            @application = @client.applications(1)
-          end
+      context 'given an id', vcr: { cassette_name: 'client/application' } do
+        let(:method_args) { [1] }
+
+        subject(:application) { applications }
+
+        it 'returns a response' do
+          expect(application).to_not be_nil
         end
 
-        it "returns a response" do
-          expect(@application).to_not be_nil
-        end
-
-        it "returns an application hash" do
-          expect(@application).to be_an_instance_of(Hash)
+        it 'returns an application hash' do
+          expect(application).to be_an_instance_of(Hash)
         end
 
         it "returns an application's details" do
-          expect(@application).to have_key(:person_id)
+          expect(application).to have_key(:person_id)
         end
       end
 
-      context "given a job_id" do
-        before do
-          VCR.use_cassette('client/application_by_job_id') do
-            @applications = @client.applications(nil, :job_id => 144371)
-          end
+      context 'given a job_id', vcr: { cassette_name: 'client/application_by_job_id' } do
+        let(:method_args) { [nil, { job_id: 144371 }] }
+
+        it 'returns a response' do
+          expect(applications).to_not be_nil
         end
 
-        it "returns a response" do
-          expect(@applications).to_not be_nil
-        end
-
-        it "returns an array of applications" do
-          expect(@applications).to be_an_instance_of(Array)
-          expect(@applications.first).to be_an_instance_of(Hash)
-          expect(@applications.first).to have_key(:prospect)
+        it 'returns an array of applications' do
+          expect(applications).to be_an_instance_of(Array)
+          expect(applications.first).to be_an_instance_of(Hash)
+          expect(applications.first).to have_key(:prospect)
         end
       end
     end
