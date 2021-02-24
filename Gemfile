@@ -5,7 +5,8 @@ group :development do
 end
 
 group :test do
-  gem "codeclimate-test-reporter", group: :test, require: nil
+  gem 'simplecov', require: false
+  gem 'webmock'
 end
 
 gemspec
