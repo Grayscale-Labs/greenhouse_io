@@ -2,6 +2,8 @@
 
 require 'spec_helper'
 
+require 'active_support/core_ext/kernel/reporting'
+
 describe GreenhouseIo::Client do
 
   let(:fake_api_token) { '123FakeToken' }
@@ -309,6 +311,53 @@ describe GreenhouseIo::Client do
 
         it 'returns application details' do
           expect(applications.first).to have_key(:person_id)
+        end
+      end
+
+      context 'given a hash as only argument', :vcr do
+        let(:fake_api_token) { ENV['API_TOKEN'] }
+
+        let(:per_page) { 1 } # Use per_page: 1 to limit data size + test pagination
+        let(:method_args) { [{ job_id: 4737402002, per_page: per_page }] } # This job is fake ("Space Explorer").
+
+        it 'returns a response' do
+          expect(applications).to_not be_nil
+        end
+
+        it 'returns an ApplicationCollection instance' do
+          expect(applications).to be_an_instance_of(GreenhouseIo::ApplicationCollection)
+        end
+
+        it 'returns application details' do
+          expect(applications.first).to respond_to(:candidate_id)
+        end
+
+        it 'iterates by utilizing pagination' do
+          expect(applications.first(per_page * 2).map(&:candidate_id)).to eq([68601968002, 69210188002])
+        end
+
+        context do
+          before(:each) do
+            allow(GreenhouseIo::Client).to receive(:get).and_return(double('success?': false, headers: {}, code: code))
+          end
+
+          context 'when rate-limiting encountered' do
+            let(:code) { 429 }
+
+            it 'retries' do
+              expect(@client).to(receive(:get_response)).thrice.and_call_original
+              suppress(GreenhouseIo::Error) { applications.first }
+            end
+          end
+
+          context 'when 5xx encountered' do
+            let(:code) { 500 }
+
+            it 'retries' do
+              expect(@client).to(receive(:get_response)).thrice.and_call_original
+              suppress(GreenhouseIo::Error) { applications.first }
+            end
+          end
         end
       end
 

@@ -1,13 +1,23 @@
+require 'greenhouse_io/api/application_collection'
+
+require 'retriable'
+
 module GreenhouseIo
   class Client
     include HTTMultiParty
     include GreenhouseIo::API
+
+    RETRIABLE_ERRORS_REGEXP = /\A
+      429 | # rate-limiting
+      5\d\d # 5xx errors
+    \z/x.freeze
 
     attr_accessor :api_token, :rate_limit, :rate_limit_remaining, :link
     base_uri 'https://harvest.greenhouse.io/v1'
 
     def initialize(api_token = nil)
       @api_token = api_token || GreenhouseIo.configuration.api_token
+      self.using_with_retries = false
     end
 
     def offices(id = nil, options = {})
@@ -55,6 +65,17 @@ module GreenhouseIo
     end
 
     def applications(id = nil, options = {})
+      # Here we're taking the first step in a larger journey to make this gem return higher-level objects instead of
+      #   hashes
+      # To start, we aim not to change current expected usage. The scenarios are:
+      # client.applications                        # returns an Array of Hash objects (unchanged)
+      # client.applications(nil, some: :param_val) # returns an Array of Hash objects (unchanged)
+      # client.applications(123)                   # returns a Hash (unchanged)
+      # client.applications(123, some: :param_val) # returns a Hash (unchanged)
+      # client.applications(some: :param_val)      # returns a GreenhouseIo::ApplicationCollection object (this is new)
+
+      return GreenhouseIo::ApplicationCollection.new(client: self, query_params: id) if id.is_a?(Hash)
+
       get_from_harvest_api "/applications#{path_id(id)}", options
     end
 
@@ -102,12 +123,6 @@ module GreenhouseIo
       get_from_harvest_api "/sources#{path_id(id)}", options
     end
 
-    private
-
-    def path_id(id = nil)
-      "/#{id}" unless id.nil?
-    end
-
     def get_from_harvest_api(url, options = {})
       response = get_response(url, query: options, basic_auth: basic_auth)
 
@@ -134,6 +149,31 @@ module GreenhouseIo
       else
         raise GreenhouseIo::Error.new(response.code)
       end
+    end
+
+    def with_retries
+      return yield if using_with_retries
+
+      begin
+        # Eventually we want to have lower-level methods like #get_from_harvest_api implement retries automatically
+        # So let's disallow nested `with_retries` blocks just in case we add it there but forget to remove it from
+        #   higher-level methods
+        self.using_with_retries = true
+
+        Retriable.retriable(on: { GreenhouseIo::Error => RETRIABLE_ERRORS_REGEXP }) do
+          yield
+        end
+      ensure
+        self.using_with_retries = false
+      end
+    end
+
+    private
+
+    attr_accessor :using_with_retries # see #with_retries
+
+    def path_id(id = nil)
+      "/#{id}" unless id.nil?
     end
 
     def set_headers_info(headers)
