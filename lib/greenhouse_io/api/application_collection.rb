@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'greenhouse_io/api/application'
 require 'greenhouse_io/api/resource_collection'
 
 module GreenhouseIo

@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'greenhouse_io/api/application'
-
 require 'active_support/core_ext/string/inflections'
 require 'link-header-parser'
 
