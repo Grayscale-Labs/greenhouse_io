@@ -32,6 +32,25 @@ module GreenhouseIo
       end
     end
 
+    def count(*args, &block)
+      return super unless all_pages_requested?
+
+      hydrated_resources.count(*args, &block)
+    end
+
+    def method_missing(method, *args, &block)
+      if hydrated_resources.respond_to?(method)
+        each() { } unless all_pages_requested? # force a full hydration
+        return hydrated_resources.public_send(method, *args, &block)
+      end
+
+      super
+    end
+
+    def respond_to_missing?(method, __include_private = false)
+      hydrated_resources.respond_to?(method) || super
+    end
+
     private
 
     attr_accessor :hydrated_resources, :next_page_url, :all_pages_requested
