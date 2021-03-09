@@ -295,7 +295,7 @@ describe GreenhouseIo::Client do
       end
     end
 
-    describe '#applications', vcr: { cassette_name: 'client/applications' }  do
+    describe '#applications', vcr: { cassette_name: 'client/applications' } do
       let(:method_args) { [] }
 
       subject(:applications) { @client.applications(*method_args) }
@@ -315,7 +315,7 @@ describe GreenhouseIo::Client do
       end
 
       context 'given a hash as only argument', :vcr do
-        let(:fake_api_token) { ENV['API_TOKEN'] }
+        let(:fake_api_token) { ENV['GREENHOUSE_API_TOKEN'] }
 
         let(:per_page) { 1 } # Use per_page: 1 to limit data size + test pagination
         let(:method_args) { [{ job_id: 4737402002, per_page: per_page }] } # This job is fake ("Space Explorer").
