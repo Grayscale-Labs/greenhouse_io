@@ -50,7 +50,7 @@ module GreenhouseIo
       hydrated_resources.count(*args, &block)
     end
 
-    def merge(other)
+    def merge!(other)
       if self.class != other.class
         raise "Cannot merge #{other.class} (resource_type: #{other.resource_type}) with #{self.class} "\
               "(resource_type: #{resource_type})"
