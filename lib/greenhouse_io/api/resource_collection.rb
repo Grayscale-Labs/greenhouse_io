@@ -37,7 +37,7 @@ module GreenhouseIo
         end
       end
 
-      all_resources_hydrated = true
+      self.all_resources_hydrated = true
 
       hydrated_resources
     end
