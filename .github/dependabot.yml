@@ -1,0 +1,17 @@
+version: 2
+updates:
+- package-ecosystem: bundler
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: rspec
+    versions:
+    - 3.10.0
+  - dependency-name: webmock
+    versions:
+    - 2.3.2
+  - dependency-name: vcr
+    versions:
+    - 5.1.0
