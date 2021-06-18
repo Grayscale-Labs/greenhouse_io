@@ -1,5 +1,6 @@
 require 'greenhouse_io/api/application_collection'
 require 'greenhouse_io/api/candidate_collection'
+require 'greenhouse_io/api/job_collection'
 
 require 'retriable'
 
@@ -116,6 +117,17 @@ module GreenhouseIo
     end
 
     def jobs(id = nil, options = {})
+      # Here we're taking the first step in a larger journey to make this gem return higher-level objects instead of
+      #   hashes
+      # To start, we aim not to change current expected usage. The scenarios are:
+      # client.jobs                        # returns an Array of Hash objects (unchanged)
+      # client.jobs(nil, some: :param_val) # returns an Array of Hash objects (unchanged)
+      # client.jobss(123)                  # returns a Hash (unchanged)
+      # client.jobs(123, some: :param_val) # returns a Hash (unchanged)
+      # client.jobs(some: :param_val)      # returns a GreenhouseIo::JobCollection object (this is new)
+
+      return GreenhouseIo::JobCollection.new(client: self, query_params: id) if id.is_a?(Hash)
+
       get_from_harvest_api "/jobs#{path_id(id)}", options
     end
 

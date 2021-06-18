@@ -496,44 +496,77 @@ describe GreenhouseIo::Client do
       end
     end
 
-    describe "#jobs" do
+    describe "#jobs", vcr: { cassette_name: 'client/jobs' } do
+      let(:method_args) { [] }
+
+      subject(:jobs) { @client.jobs(*method_args) }
+
       context "given no id" do
-        before do
-          VCR.use_cassette('client/jobs') do
-            @jobs = @client.jobs
-          end
-        end
-
         it "returns a response" do
-          expect(@jobs).to_not be_nil
+          expect(jobs).to_not be_nil
         end
 
-        it "returns an array of applications" do
-          expect(@jobs).to be_an_instance_of(Array)
+        it "returns an array of jobs" do
+          expect(jobs).to be_an_instance_of(Array)
         end
 
-        it "returns application details" do
-          expect(@jobs.first).to have_key(:employment_type)
+        it "returns jobs details" do
+          expect(jobs.first).to have_key(:employment_type)
         end
       end
 
-      context "given an id" do
-        before do
-          VCR.use_cassette('client/job') do
-            @job = @client.jobs(4690)
+      context 'given a hash as only argument', :vcr do
+        let(:fake_api_token) { ENV['GREENHOUSE_API_TOKEN'] }
+        let(:per_page) { 1 } # Use per_page: 1 to limit data size + test pagination
+        let(:method_args) { [{ per_page: per_page }] } # This job is fake ("Space Explorer").
+        it 'returns a response' do
+          expect(jobs).to_not be_nil
+        end
+        it 'returns a JobCollection instance' do
+          expect(jobs).to be_an_instance_of(GreenhouseIo::JobCollection)
+        end
+        it 'returns job details' do
+          expect(jobs.first).to respond_to(:status)
+        end
+        it 'iterates by utilizing pagination' do
+          expect(jobs.first(per_page * 2).map(&:id)).to eq([4237829002, 4298418002])
+        end
+        context do
+          before(:each) do
+            allow(GreenhouseIo::Client).to receive(:get).and_return(double('success?': false, headers: {}, code: code))
+          end
+          context 'when rate-limiting encountered' do
+            let(:code) { 429 }
+            it 'retries' do
+              expect(@client).to(receive(:get_response)).thrice.and_call_original
+              suppress(GreenhouseIo::Error) { jobs.first }
+            end
+          end
+          context 'when 5xx encountered' do
+            let(:code) { 500 }
+            it 'retries' do
+              expect(@client).to(receive(:get_response)).thrice.and_call_original
+              suppress(GreenhouseIo::Error) { jobs.first }
+            end
           end
         end
+      end
+
+      context "given an id", vcr: { cassette_name: 'client/job' } do
+        let(:method_args) { [4690] }
+
+        subject(:job) { jobs }
 
         it "returns a response" do
-          expect(@job).to_not be_nil
+          expect(job).to_not be_nil
         end
 
         it "returns an application hash" do
-          expect(@job).to be_an_instance_of(Hash)
+          expect(job).to be_an_instance_of(Hash)
         end
 
         it "returns an application's details" do
-          expect(@job).to have_key(:employment_type)
+          expect(job).to have_key(:employment_type)
         end
       end
     end
