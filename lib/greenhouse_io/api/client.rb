@@ -108,11 +108,9 @@ module GreenhouseIo
       get_from_harvest_api "/scorecards/#{id}", options
     end
 
-    def scheduled_interviews(id, options = {})
-      get_from_harvest_api "/applications/#{id}/scheduled_interviews", options
-    end
+    def scheduled_interviews(id = nil, options = {})
+      return GreenhouseIo::ScheduledInterviewCollection.new(client: self, query_params: id) if id.is_a?(Hash)
 
-    def all_scheduled_interviews(id = nil, options = {})
       get_from_harvest_api "/scheduled_interviews/#{id}", options
     end
 
