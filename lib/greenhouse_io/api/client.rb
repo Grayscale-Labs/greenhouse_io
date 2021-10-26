@@ -175,7 +175,7 @@ module GreenhouseIo
       end
     end
 
-    def with_retries
+    def with_retries(retry_options={ on: { GreenhouseIo::Error => RETRIABLE_ERRORS_REGEXP } })
       return yield if using_with_retries
 
       begin
@@ -184,7 +184,7 @@ module GreenhouseIo
         #   higher-level methods
         self.using_with_retries = true
 
-        Retriable.retriable(on: { GreenhouseIo::Error => RETRIABLE_ERRORS_REGEXP }) do
+        Retriable.retriable(retry_options) do
           yield
         end
       ensure
