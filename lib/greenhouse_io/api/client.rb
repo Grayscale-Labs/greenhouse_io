@@ -37,15 +37,6 @@ module GreenhouseIo
     end
 
     def candidates(options = {})
-      # Here we're taking the first step in a larger journey to make this gem return higher-level objects instead of
-      #   hashes
-      # To start, we aim not to change current expected usage. The scenarios are:
-      # client.candidates                        # returns an Array of Hash objects (unchanged)
-      # client.candidates(nil, some: :param_val) # returns an Array of Hash objects (unchanged)
-      # client.candidates(123)                   # returns a Hash (unchanged)
-      # client.candidates(123, some: :param_val) # returns a Hash (unchanged)
-      # client.candidates(some: :param_val)      # returns a GreenhouseIo::CandidateCollection object (this is new)
-
       GreenhouseIo::CandidateCollection.new(client: self, query_params: options)
     end
 
@@ -78,15 +69,6 @@ module GreenhouseIo
     end
 
     def applications(options = {})
-      # Here we're taking the first step in a larger journey to make this gem return higher-level objects instead of
-      #   hashes
-      # To start, we aim not to change current expected usage. The scenarios are:
-      # client.applications                        # returns an Array of Hash objects (unchanged)
-      # client.applications(nil, some: :param_val) # returns an Array of Hash objects (unchanged)
-      # client.applications(123)                   # returns a Hash (unchanged)
-      # client.applications(123, some: :param_val) # returns a Hash (unchanged)
-      # client.applications(some: :param_val)      # returns a GreenhouseIo::ApplicationCollection object (this is new)
-
       GreenhouseIo::ApplicationCollection.new(client: self, query_params: options)
     end
 
@@ -111,15 +93,6 @@ module GreenhouseIo
     end
 
     def jobs(options = {})
-      # Here we're taking the first step in a larger journey to make this gem return higher-level objects instead of
-      #   hashes
-      # To start, we aim not to change current expected usage. The scenarios are:
-      # client.jobs                        # returns an Array of Hash objects (unchanged)
-      # client.jobs(nil, some: :param_val) # returns an Array of Hash objects (unchanged)
-      # client.jobss(123)                  # returns a Hash (unchanged)
-      # client.jobs(123, some: :param_val) # returns a Hash (unchanged)
-      # client.jobs(some: :param_val)      # returns a GreenhouseIo::JobCollection object (this is new)
-
       GreenhouseIo::JobCollection.new(client: self, query_params: options)
     end
 
