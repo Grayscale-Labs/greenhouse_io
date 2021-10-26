@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'greenhouse_io/api/candidate'
+require 'greenhouse_io/api/scheduled_interview'
 require 'greenhouse_io/api/resource_collection'
 
 module GreenhouseIo
