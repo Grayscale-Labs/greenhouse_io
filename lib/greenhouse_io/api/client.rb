@@ -1,6 +1,8 @@
 require 'greenhouse_io/api/application_collection'
 require 'greenhouse_io/api/candidate_collection'
+require 'greenhouse_io/api/scheduled_interview_collection'
 require 'greenhouse_io/api/job_collection'
+require 'greenhouse_io/api/user_collection'
 
 require 'retriable'
 
@@ -34,7 +36,7 @@ module GreenhouseIo
       get_from_harvest_api "/departments#{path_id(id)}", options
     end
 
-    def candidates(id = nil, options = {})
+    def candidates(options = {})
       # Here we're taking the first step in a larger journey to make this gem return higher-level objects instead of
       #   hashes
       # To start, we aim not to change current expected usage. The scenarios are:
@@ -44,9 +46,7 @@ module GreenhouseIo
       # client.candidates(123, some: :param_val) # returns a Hash (unchanged)
       # client.candidates(some: :param_val)      # returns a GreenhouseIo::CandidateCollection object (this is new)
 
-      return GreenhouseIo::CandidateCollection.new(client: self, query_params: id) if id.is_a?(Hash)
-
-      get_from_harvest_api "/candidates#{path_id(id)}", options
+      GreenhouseIo::CandidateCollection.new(client: self, query_params: options)
     end
 
     def activity_feed(id, options = {})
@@ -77,7 +77,7 @@ module GreenhouseIo
       )
     end
 
-    def applications(id = nil, options = {})
+    def applications(options = {})
       # Here we're taking the first step in a larger journey to make this gem return higher-level objects instead of
       #   hashes
       # To start, we aim not to change current expected usage. The scenarios are:
@@ -87,9 +87,7 @@ module GreenhouseIo
       # client.applications(123, some: :param_val) # returns a Hash (unchanged)
       # client.applications(some: :param_val)      # returns a GreenhouseIo::ApplicationCollection object (this is new)
 
-      return GreenhouseIo::ApplicationCollection.new(client: self, query_params: id) if id.is_a?(Hash)
-
-      get_from_harvest_api "/applications#{path_id(id)}", options
+      GreenhouseIo::ApplicationCollection.new(client: self, query_params: options)
     end
 
     def offers_for_application(id, options = {})
@@ -108,13 +106,11 @@ module GreenhouseIo
       get_from_harvest_api "/scorecards/#{id}", options
     end
 
-    def scheduled_interviews(id = nil, options = {})
-      return GreenhouseIo::ScheduledInterviewCollection.new(client: self, query_params: id) if id.is_a?(Hash)
-
-      get_from_harvest_api "/scheduled_interviews/#{id}", options
+    def scheduled_interviews(options = {})
+      GreenhouseIo::ScheduledInterviewCollection.new(client: self, query_params: options)
     end
 
-    def jobs(id = nil, options = {})
+    def jobs(options = {})
       # Here we're taking the first step in a larger journey to make this gem return higher-level objects instead of
       #   hashes
       # To start, we aim not to change current expected usage. The scenarios are:
@@ -124,9 +120,7 @@ module GreenhouseIo
       # client.jobs(123, some: :param_val) # returns a Hash (unchanged)
       # client.jobs(some: :param_val)      # returns a GreenhouseIo::JobCollection object (this is new)
 
-      return GreenhouseIo::JobCollection.new(client: self, query_params: id) if id.is_a?(Hash)
-
-      get_from_harvest_api "/jobs#{path_id(id)}", options
+      GreenhouseIo::JobCollection.new(client: self, query_params: options)
     end
 
     def stages(id, options = {})
@@ -137,8 +131,8 @@ module GreenhouseIo
       get_from_harvest_api "/jobs/#{id}/job_post", options
     end
 
-    def users(id = nil, options = {})
-      get_from_harvest_api "/users#{path_id(id)}", options
+    def users(options = {})
+      GreenhouseIo::UserCollection.new(client: self, query_params: options)
     end
 
     def sources(id = nil, options = {})
@@ -190,13 +184,13 @@ module GreenhouseIo
       end
     end
 
-    private
-
-    attr_accessor :using_with_retries # see #with_retries
-
     def path_id(id = nil)
       "/#{id}" unless id.nil?
     end
+
+    private
+
+    attr_accessor :using_with_retries # see #with_retries
 
     def set_headers_info(headers)
       self.rate_limit = headers['x-ratelimit-limit'].to_i
