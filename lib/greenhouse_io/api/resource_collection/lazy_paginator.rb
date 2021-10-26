@@ -50,8 +50,9 @@ module GreenhouseIo
           if next_page_url.present?
             client.get_from_harvest_api(next_page_url)
           else
-            # e.g. client.applications(nil, query_params)
-            client.public_send(resource_class.name.demodulize.tableize, nil, query_params)
+            # If the id is part of the params, bring it out and append to URL
+            id = query_params.delete(:id)
+            client.get_from_harvest_api "#{resource_class::ENDPOINT}#{client.path_id(id)}", query_params
           end
         end
 
