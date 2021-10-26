@@ -37,7 +37,7 @@ module GreenhouseIo
     end
 
     def candidates(options = {})
-      GreenhouseIo::CandidateCollection.new(client: self, query_params: options)
+      get_resource GreenhouseIo::CandidateCollection, options
     end
 
     def activity_feed(id, options = {})
@@ -69,7 +69,7 @@ module GreenhouseIo
     end
 
     def applications(options = {})
-      GreenhouseIo::ApplicationCollection.new(client: self, query_params: options)
+      get_resource GreenhouseIo::ApplicationCollection, options
     end
 
     def offers_for_application(id, options = {})
@@ -89,11 +89,11 @@ module GreenhouseIo
     end
 
     def scheduled_interviews(options = {})
-      GreenhouseIo::ScheduledInterviewCollection.new(client: self, query_params: options)
+      get_resource GreenhouseIo::ScheduledInterviewCollection, options
     end
 
     def jobs(options = {})
-      GreenhouseIo::JobCollection.new(client: self, query_params: options)
+      get_resource GreenhouseIo::JobCollection, options
     end
 
     def stages(id, options = {})
@@ -105,7 +105,7 @@ module GreenhouseIo
     end
 
     def users(options = {})
-      GreenhouseIo::UserCollection.new(client: self, query_params: options)
+      get_resource GreenhouseIo::UserCollection, options
     end
 
     def sources(id = nil, options = {})
@@ -164,6 +164,16 @@ module GreenhouseIo
     private
 
     attr_accessor :using_with_retries # see #with_retries
+
+    def get_resource(resource_class, options)
+      resource_collection = resource_class.new(client: self, query_params: options)
+
+      if options.has_key?(:id)
+        resource_collection.first
+      else
+        resource_collection
+      end
+    end
 
     def set_headers_info(headers)
       self.rate_limit = headers['x-ratelimit-limit'].to_i
