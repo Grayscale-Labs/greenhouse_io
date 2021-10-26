@@ -168,6 +168,7 @@ module GreenhouseIo
     def get_resource(resource_class, options)
       resource_collection = resource_class.new(client: self, query_params: options)
 
+      # Options hash must use symbols as keys!
       if options.has_key?(:id)
         resource_collection.first
       else
