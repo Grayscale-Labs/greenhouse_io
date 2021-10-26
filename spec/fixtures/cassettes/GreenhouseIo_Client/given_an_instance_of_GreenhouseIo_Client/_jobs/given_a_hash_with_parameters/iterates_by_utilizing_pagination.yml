@@ -1,0 +1,109 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://harvest.greenhouse.io/v1/jobs?per_page=1
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+      Authorization:
+      - Basic <AUTH_VALUE>
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 26 Oct 2021 17:01:24 GMT
+      Content-Type:
+      - application/json;charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Vary:
+      - Accept-Encoding
+      Status:
+      - 200 OK
+      Link:
+      - <https://harvest.greenhouse.io/v1/jobs?page=2&per_page=1>; rel="next",<https://harvest.greenhouse.io/v1/jobs?page=38&per_page=1>;
+        rel="last"
+      X-Ratelimit-Limit:
+      - '50'
+      X-Ratelimit-Remaining:
+      - '45'
+      X-Content-Type-Options:
+      - nosniff
+      X-Request-Id:
+      - 503c66b930689149c8ad7a5092a14c83
+      Strict-Transport-Security:
+      - max-age=15724800; includeSubDomains
+    body:
+      encoding: ASCII-8BIT
+      string: '[{"id":4237829002,"name":"Store Manager","requisition_id":null,"notes":null,"confidential":false,"is_template":null,"copied_from_id":null,"status":"open","created_at":"2019-04-29T15:12:23.760Z","opened_at":"2019-09-27T19:42:40.128Z","closed_at":null,"updated_at":"2020-11-16T21:08:17.184Z","departments":[null],"offices":[],"hiring_team":{"hiring_managers":[],"recruiters":[{"id":4173307002,"first_name":"Ty","last_name":"Abernethy","name":"Ty
+        Abernethy","employee_id":null,"responsible":true}],"coordinators":[],"sourcers":[]},"custom_fields":{"employment_type":"Full-time"},"keyed_custom_fields":{"employment_type":{"name":"Employment
+        Type","type":"single_select","value":"Full-time"}},"openings":[{"id":4509100002,"opening_id":null,"status":"open","opened_at":"2019-09-27T19:42:40.124Z","closed_at":null,"application_id":null,"close_reason":null}]}]'
+    http_version:
+  recorded_at: Tue, 26 Oct 2021 17:01:24 GMT
+- request:
+    method: get
+    uri: https://harvest.greenhouse.io/v1/jobs?page=2&per_page=1
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+      Authorization:
+      - Basic <AUTH_VALUE>
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 26 Oct 2021 17:01:24 GMT
+      Content-Type:
+      - application/json;charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Vary:
+      - Accept-Encoding
+      Status:
+      - 200 OK
+      Link:
+      - <https://harvest.greenhouse.io/v1/jobs?page=3&per_page=1>; rel="next",<https://harvest.greenhouse.io/v1/jobs?page=1&per_page=1>;
+        rel="prev",<https://harvest.greenhouse.io/v1/jobs?page=38&per_page=1>; rel="last"
+      X-Ratelimit-Limit:
+      - '50'
+      X-Ratelimit-Remaining:
+      - '44'
+      X-Content-Type-Options:
+      - nosniff
+      X-Request-Id:
+      - dbfd3c705d460a6b385214baa3d5b3a7
+      Strict-Transport-Security:
+      - max-age=15724800; includeSubDomains
+    body:
+      encoding: ASCII-8BIT
+      string: '[{"id":4298418002,"name":"Sr. Sales Development Rep","requisition_id":null,"notes":null,"confidential":false,"is_template":null,"copied_from_id":null,"status":"open","created_at":"2019-07-11T20:03:58.027Z","opened_at":"2019-07-11T20:03:58.245Z","closed_at":null,"updated_at":"2021-04-21T19:13:15.144Z","departments":[null],"offices":[],"hiring_team":{"hiring_managers":[{"id":4173307002,"first_name":"Ty","last_name":"Abernethy","name":"Ty
+        Abernethy","employee_id":null}],"recruiters":[{"id":4349182002,"first_name":"Charles","last_name":"Porges","name":"Charles
+        Porges","employee_id":null,"responsible":true}],"coordinators":[{"id":4318884002,"first_name":"Hubert","last_name":"Liu","name":"Hubert
+        Liu","employee_id":null,"responsible":true}],"sourcers":[]},"custom_fields":{"employment_type":"Full-time"},"keyed_custom_fields":{"employment_type":{"name":"Employment
+        Type","type":"single_select","value":"Full-time"}},"openings":[{"id":4726946002,"opening_id":null,"status":"open","opened_at":"2019-07-11T20:03:58.032Z","closed_at":null,"application_id":null,"close_reason":null}]}]'
+    http_version:
+  recorded_at: Tue, 26 Oct 2021 17:01:24 GMT
+recorded_with: VCR 3.0.3

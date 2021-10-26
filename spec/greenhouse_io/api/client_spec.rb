@@ -156,7 +156,21 @@ describe GreenhouseIo::Client do
 
       subject(:candidates) { @client.candidates(*method_args) }
 
-      context 'given a hash as only argument', :vcr do
+      context 'given no options' do
+        it 'returns a response' do
+          expect(candidates).to_not be_nil
+        end
+
+        it 'returns a CandidateCollection instance' do
+          expect(candidates).to be_an_instance_of(GreenhouseIo::CandidateCollection)
+        end
+
+        it 'returns details of candidates' do
+          expect(candidates.first).to have_key(:first_name)
+        end
+      end
+
+      context 'given a hash with no id', :vcr do
         let(:fake_api_token) { ENV['GREENHOUSE_API_TOKEN'] }
 
         let(:per_page) { 1 } # Use per_page: 1 to limit data size + test pagination
@@ -200,6 +214,24 @@ describe GreenhouseIo::Client do
               suppress(GreenhouseIo::Error) { candidates.first }
             end
           end
+        end
+      end
+
+      context 'given a hash with an id', vcr: { cassette_name: 'client/candidate' } do
+        let(:method_args) { [{ id: 1 }] }
+
+        subject(:candidate) { candidates }
+
+        it 'returns a response' do
+          expect(candidate).to_not be_nil
+        end
+
+        it 'returns a Candidate instance' do
+          expect(candidate).to be_an_instance_of(GreenhouseIo::Candidate)
+        end
+
+        it "returns a candidate's details" do
+          expect(candidate).to have_key(:first_name)
         end
       end
     end
@@ -310,7 +342,21 @@ describe GreenhouseIo::Client do
 
       subject(:applications) { @client.applications(*method_args) }
 
-      context 'given a hash as only argument', :vcr do
+      context 'given an empty hash' do
+        it 'returns a response' do
+          expect(applications).to_not be_nil
+        end
+
+        it 'returns an ApplicationCollection instance' do
+          expect(applications).to be_an_instance_of(GreenhouseIo::ApplicationCollection)
+        end
+
+        it 'returns application details' do
+          expect(applications.first).to have_key(:person_id)
+        end
+      end
+
+      context 'given a hash with parameters', :vcr do
         let(:fake_api_token) { ENV['GREENHOUSE_API_TOKEN'] }
 
         let(:per_page) { 1 } # Use per_page: 1 to limit data size + test pagination
@@ -354,6 +400,24 @@ describe GreenhouseIo::Client do
               suppress(GreenhouseIo::Error) { applications.first }
             end
           end
+        end
+      end
+
+      context 'given a hash with an id', vcr: { cassette_name: 'client/application' } do
+        let(:method_args) { [{ id: 1 }] }
+
+        subject(:application) { applications }
+
+        it 'returns a response' do
+          expect(application).to_not be_nil
+        end
+
+        it 'returns an Application instance' do
+          expect(application).to be_an_instance_of(GreenhouseIo::Application)
+        end
+
+        it "returns an application's details" do
+          expect(application).to have_key(:person_id)
         end
       end
 
@@ -414,23 +478,21 @@ describe GreenhouseIo::Client do
 
     describe "#scheduled_interviews" do
       before do
-        VCR.use_cassette('client/scheduled_interviews') do
-          @scheduled_interviews = @client.scheduled_interviews(id: 1)
+        VCR.use_cassette('client/scheduled_interview') do
+          @scheduled_interview = @client.scheduled_interviews(id: 1)
         end
       end
 
       it "returns a response" do
-        expect(@scheduled_interviews).to_not be_nil
+        expect(@scheduled_interview).to_not be_nil
       end
 
-      it "returns a ScheduledInterviewCollection instance" do
-        expect(@scheduled_interviews).to be_an_instance_of(GreenhouseIo::ScheduledInterviewCollection)
+      it "returns a ScheduledInterview instance" do
+        expect(@scheduled_interview).to be_an_instance_of(GreenhouseIo::ScheduledInterview)
       end
 
       it "returns details of the interview" do
-        VCR.use_cassette('client/scheduled_interviews') do
-          expect(@scheduled_interviews.first).to have_key(:starts_at)
-        end
+        expect(@scheduled_interview).to have_key(:starts_at)
       end
     end
 
@@ -439,7 +501,21 @@ describe GreenhouseIo::Client do
 
       subject(:jobs) { @client.jobs(*method_args) }
 
-      context 'given a hash as only argument', :vcr do
+      context "given an empty hash" do
+        it "returns a response" do
+          expect(jobs).to_not be_nil
+        end
+
+        it "returns a JobCollection instance" do
+          expect(jobs).to be_an_instance_of(GreenhouseIo::JobCollection)
+        end
+
+        it "returns jobs details" do
+          expect(jobs.first).to have_key(:employment_type)
+        end
+      end
+
+      context 'given a hash with parameters', :vcr do
         let(:fake_api_token) { ENV['GREENHOUSE_API_TOKEN'] }
         let(:per_page) { 1 } # Use per_page: 1 to limit data size + test pagination
         let(:method_args) { [{ per_page: per_page }] } # This job is fake ("Space Explorer").
@@ -473,6 +549,24 @@ describe GreenhouseIo::Client do
               suppress(GreenhouseIo::Error) { jobs.first }
             end
           end
+        end
+      end
+
+      context "given hash with an id", vcr: { cassette_name: 'client/job' } do
+        let(:method_args) { [{ id: 4690 }] }
+
+        subject(:job) { jobs }
+
+        it "returns a response" do
+          expect(job).to_not be_nil
+        end
+
+        it "returns a Job instance" do
+          expect(job).to be_an_instance_of(GreenhouseIo::Job)
+        end
+
+        it "returns a job's details" do
+          expect(job).to have_key(:employment_type)
         end
       end
     end
@@ -518,25 +612,39 @@ describe GreenhouseIo::Client do
     end
 
     describe "#users" do
-      context "given no id" do
+      context "given an empty hash", vcr: { cassette_name: 'client/users' } do
         before do
-          VCR.use_cassette('client/users') do
-            @users = @client.users
-          end
+          @users = @client.users
         end
 
         it "returns a response" do
           expect(@users).to_not be_nil
         end
 
-        it "returns a UserCollection" do
+        it "returns a UserCollection instance" do
           expect(@users).to be_an_instance_of(GreenhouseIo::UserCollection)
         end
 
         it "returns user details" do
-          VCR.use_cassette('client/users') do
-            expect(@users.first).to have_key('name')
-          end
+          expect(@users.first).to have_key(:name)
+        end
+      end
+
+      context "given a hash with an id", vcr: { cassette_name: 'client/user' } do
+        before do
+          @user = @client.users(id: 10327)
+        end
+
+        it "returns a response" do
+          expect(@user).to_not be_nil
+        end
+
+        it "returns a User instance" do
+          expect(@user).to be_an_instance_of(GreenhouseIo::User)
+        end
+
+        it "returns an user's details" do
+          expect(@user).to have_key(:name)
         end
       end
     end
