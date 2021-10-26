@@ -60,6 +60,13 @@ module GreenhouseIo
         self.next_page_url       = links.find { |link| link.relation_types == ['next'] }&.target_uri
         self.all_pages_requested = next_page_url.nil?
 
+        # If the response only returns one element, then
+        # it does not return it in a list. This if checks
+        # for that and wraps the singular result in an array.
+        if resp_arr.is_a? Hash
+          resp_arr = [resp_arr]
+        end
+
         # e.g. [...].map { |resource_hash| GreenhouseIo::Application.new(resource_hash) }
         hydrated_resources.push(*resp_arr.map { |resource_hash| resource_class.new(resource_hash) })
 
