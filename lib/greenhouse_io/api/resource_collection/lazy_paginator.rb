@@ -50,14 +50,22 @@ module GreenhouseIo
           if next_page_url.present?
             client.get_from_harvest_api(next_page_url)
           else
-            # e.g. client.applications(nil, query_params)
-            client.public_send(resource_class.name.demodulize.tableize, nil, query_params)
+            # If the id is part of the params, bring it out and append to URL
+            id = query_params.delete(:id)
+            client.get_from_harvest_api("#{resource_class::ENDPOINT}#{client.path_id(id)}", query_params)
           end
         end
 
         links = LinkHeaderParser.parse(client.link.to_s, base: client.class.base_uri)
         self.next_page_url       = links.find { |link| link.relation_types == ['next'] }&.target_uri
         self.all_pages_requested = next_page_url.nil?
+
+        # If the response only returns one element, then
+        # it does not return it in a list. This if checks
+        # for that and wraps the singular result in an array.
+        if resp_arr.is_a? Hash
+          resp_arr = [resp_arr]
+        end
 
         # e.g. [...].map { |resource_hash| GreenhouseIo::Application.new(resource_hash) }
         hydrated_resources.push(*resp_arr.map { |resource_hash| resource_class.new(resource_hash) })

@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://harvest.greenhouse.io/v1/applications/1/scheduled_interviews
+    uri: https://harvest.greenhouse.io/v1/scheduled_interviews/1
     body:
       encoding: US-ASCII
       string: ''

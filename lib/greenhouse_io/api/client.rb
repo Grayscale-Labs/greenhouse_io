@@ -1,6 +1,8 @@
 require 'greenhouse_io/api/application_collection'
 require 'greenhouse_io/api/candidate_collection'
+require 'greenhouse_io/api/scheduled_interview_collection'
 require 'greenhouse_io/api/job_collection'
+require 'greenhouse_io/api/user_collection'
 
 require 'retriable'
 
@@ -34,19 +36,8 @@ module GreenhouseIo
       get_from_harvest_api "/departments#{path_id(id)}", options
     end
 
-    def candidates(id = nil, options = {})
-      # Here we're taking the first step in a larger journey to make this gem return higher-level objects instead of
-      #   hashes
-      # To start, we aim not to change current expected usage. The scenarios are:
-      # client.candidates                        # returns an Array of Hash objects (unchanged)
-      # client.candidates(nil, some: :param_val) # returns an Array of Hash objects (unchanged)
-      # client.candidates(123)                   # returns a Hash (unchanged)
-      # client.candidates(123, some: :param_val) # returns a Hash (unchanged)
-      # client.candidates(some: :param_val)      # returns a GreenhouseIo::CandidateCollection object (this is new)
-
-      return GreenhouseIo::CandidateCollection.new(client: self, query_params: id) if id.is_a?(Hash)
-
-      get_from_harvest_api "/candidates#{path_id(id)}", options
+    def candidates(options = {})
+      get_resource GreenhouseIo::CandidateCollection, options
     end
 
     def activity_feed(id, options = {})
@@ -77,19 +68,8 @@ module GreenhouseIo
       )
     end
 
-    def applications(id = nil, options = {})
-      # Here we're taking the first step in a larger journey to make this gem return higher-level objects instead of
-      #   hashes
-      # To start, we aim not to change current expected usage. The scenarios are:
-      # client.applications                        # returns an Array of Hash objects (unchanged)
-      # client.applications(nil, some: :param_val) # returns an Array of Hash objects (unchanged)
-      # client.applications(123)                   # returns a Hash (unchanged)
-      # client.applications(123, some: :param_val) # returns a Hash (unchanged)
-      # client.applications(some: :param_val)      # returns a GreenhouseIo::ApplicationCollection object (this is new)
-
-      return GreenhouseIo::ApplicationCollection.new(client: self, query_params: id) if id.is_a?(Hash)
-
-      get_from_harvest_api "/applications#{path_id(id)}", options
+    def applications(options = {})
+      get_resource GreenhouseIo::ApplicationCollection, options
     end
 
     def offers_for_application(id, options = {})
@@ -108,27 +88,12 @@ module GreenhouseIo
       get_from_harvest_api "/scorecards/#{id}", options
     end
 
-    def scheduled_interviews(id, options = {})
-      get_from_harvest_api "/applications/#{id}/scheduled_interviews", options
+    def scheduled_interviews(options = {})
+      get_resource GreenhouseIo::ScheduledInterviewCollection, options
     end
 
-    def all_scheduled_interviews(id = nil, options = {})
-      get_from_harvest_api "/scheduled_interviews/#{id}", options
-    end
-
-    def jobs(id = nil, options = {})
-      # Here we're taking the first step in a larger journey to make this gem return higher-level objects instead of
-      #   hashes
-      # To start, we aim not to change current expected usage. The scenarios are:
-      # client.jobs                        # returns an Array of Hash objects (unchanged)
-      # client.jobs(nil, some: :param_val) # returns an Array of Hash objects (unchanged)
-      # client.jobss(123)                  # returns a Hash (unchanged)
-      # client.jobs(123, some: :param_val) # returns a Hash (unchanged)
-      # client.jobs(some: :param_val)      # returns a GreenhouseIo::JobCollection object (this is new)
-
-      return GreenhouseIo::JobCollection.new(client: self, query_params: id) if id.is_a?(Hash)
-
-      get_from_harvest_api "/jobs#{path_id(id)}", options
+    def jobs(options = {})
+      get_resource GreenhouseIo::JobCollection, options
     end
 
     def stages(id, options = {})
@@ -139,8 +104,8 @@ module GreenhouseIo
       get_from_harvest_api "/jobs/#{id}/job_post", options
     end
 
-    def users(id = nil, options = {})
-      get_from_harvest_api "/users#{path_id(id)}", options
+    def users(options = {})
+      get_resource GreenhouseIo::UserCollection, options
     end
 
     def sources(id = nil, options = {})
@@ -192,12 +157,23 @@ module GreenhouseIo
       end
     end
 
+    def path_id(id = nil)
+      "/#{id}" unless id.nil?
+    end
+
     private
 
     attr_accessor :using_with_retries # see #with_retries
 
-    def path_id(id = nil)
-      "/#{id}" unless id.nil?
+    def get_resource(resource_class, options)
+      resource_collection = resource_class.new(client: self, query_params: options)
+
+      # Options hash must use symbols as keys!
+      if options.has_key?(:id)
+        resource_collection.first
+      else
+        resource_collection
+      end
     end
 
     def set_headers_info(headers)
