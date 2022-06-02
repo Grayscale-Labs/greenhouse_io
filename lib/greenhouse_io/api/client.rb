@@ -100,6 +100,10 @@ module GreenhouseIo
       get_from_harvest_api "/jobs/#{id}/stages", options
     end
 
+    def job_stages(options = {})
+      get_resource GreenhouseIo::JobStages, options
+    end
+
     def job_post(id, options = {})
       get_from_harvest_api "/jobs/#{id}/job_post", options
     end
