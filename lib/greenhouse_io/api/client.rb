@@ -101,7 +101,7 @@ module GreenhouseIo
     end
 
     def job_stages(options = {})
-      get_resource GreenhouseIo::JobStages, options
+      get_resource GreenhouseIo::JobStagesCollection, options
     end
 
     def job_post(id, options = {})
