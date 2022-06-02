@@ -2,6 +2,7 @@ require 'greenhouse_io/api/application_collection'
 require 'greenhouse_io/api/candidate_collection'
 require 'greenhouse_io/api/scheduled_interview_collection'
 require 'greenhouse_io/api/job_collection'
+require 'greenhouse_io/api/job_stages_collection'
 require 'greenhouse_io/api/user_collection'
 
 require 'retriable'
