@@ -3,7 +3,7 @@
 require 'greenhouse_io/api/resource'
 
 module GreenhouseIo
-  class Candidate < Resource
+  class JobStages < Resource
     ENDPOINT = "/job_stages"
   end
 end
