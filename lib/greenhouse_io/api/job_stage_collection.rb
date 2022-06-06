@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-require 'greenhouse_io/api/job_stages'
+require 'greenhouse_io/api/job_stage'
 require 'greenhouse_io/api/resource_collection'
 
 module GreenhouseIo
-  class JobStagesCollection < ResourceCollection
+  class JobStageCollection < ResourceCollection
     def initialize(*args, **kw_args)
-      kw_args.merge!(resource_class: JobStages)
+      kw_args.merge!(resource_class: JobStage)
       super
     end
   end

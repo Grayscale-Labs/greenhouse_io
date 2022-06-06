@@ -2,7 +2,7 @@ require 'greenhouse_io/api/application_collection'
 require 'greenhouse_io/api/candidate_collection'
 require 'greenhouse_io/api/scheduled_interview_collection'
 require 'greenhouse_io/api/job_collection'
-require 'greenhouse_io/api/job_stages_collection'
+require 'greenhouse_io/api/job_stage_collection'
 require 'greenhouse_io/api/user_collection'
 
 require 'retriable'
@@ -102,7 +102,7 @@ module GreenhouseIo
     end
 
     def job_stages(options = {})
-      get_resource GreenhouseIo::JobStagesCollection, options
+      get_resource GreenhouseIo::JobStageCollection, options
     end
 
     def job_post(id, options = {})
