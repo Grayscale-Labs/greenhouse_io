@@ -215,6 +215,21 @@ describe GreenhouseIo::Client do
             end
           end
         end
+
+        context 'passes timestamp parameters' do
+          let(:time) { Time.now }
+          let(:method_args) { [{created_at: time, updated_at: time, last_activity: time}] }
+          let(:get_resource) {double(get_resource)}
+  
+          before(:each) do
+            allow(@client).to(receive(:get_resource)).with(GreenhouseIo::CandidateCollection, {created_at: time, updated_at: time, last_activity: time})
+          end
+  
+          it 'converts times to iso8601' do
+            expect(@client).to receive(:get_resource).with(GreenhouseIo::CandidateCollection, {created_at: time.iso8601, updated_at: time.iso8601, last_activity: time.iso8601})
+            @client.candidates(*method_args)
+          end
+        end
       end
 
       context 'given a hash with an id', vcr: { cassette_name: 'client/candidate' } do
@@ -434,6 +449,21 @@ describe GreenhouseIo::Client do
           expect(applications.first).to have_key(:prospect)
         end
       end
+
+      context 'passes timestamp parameters' do
+        let(:time) { Time.now }
+        let(:method_args) { [{applied_at: time, rejected_at: time, last_activity_at: time}] }
+        let(:get_resource) {double(get_resource)}
+
+        before(:each) do
+          allow(@client).to(receive(:get_resource)).with(GreenhouseIo::ApplicationCollection, {applied_at: time, rejected_at: time, last_activity_at: time})
+        end
+
+        it 'converts times to iso8601' do
+          expect(@client).to receive(:get_resource).with(GreenhouseIo::ApplicationCollection, {applied_at: time.iso8601, rejected_at: time.iso8601, last_activity_at: time.iso8601})
+          @client.applications(*method_args)
+        end
+      end
     end
 
     describe "#scorecards" do
@@ -453,6 +483,21 @@ describe GreenhouseIo::Client do
 
       it "returns details of the scorecards" do
         expect(@scorecard.first).to have_key(:interview)
+      end
+
+      context 'passes timestamp parameters' do
+        let(:time) { Time.now }
+        let(:method_args) { [1, {created_at: time, updated_at: time, interviewed_at: time, submitted_at: time}] }
+        let(:get_from_harvest_api) {double(get_from_harvest_api)}
+
+        before(:each) do
+          allow(@client).to(receive(:get_from_harvest_api)).with("/applications/1/scorecards", {created_at: time, updated_at: time, interviewed_at: time, submitted_at: time})
+        end
+
+        it 'converts times to iso8601' do
+          expect(@client).to receive(:get_from_harvest_api).with("/applications/1/scorecards", {created_at: time.iso8601, updated_at: time.iso8601, interviewed_at: time.iso8601, submitted_at: time.iso8601})
+          @client.scorecards(*method_args)
+        end
       end
     end
 
@@ -474,25 +519,59 @@ describe GreenhouseIo::Client do
       it "returns details of the scorecards" do
         expect(@scorecard.first).to have_key(:interview)
       end
+
+      context 'passes timestamp parameters' do
+        let(:time) { Time.now }
+        let(:method_args) { [1, {created_at: time, updated_at: time, interviewed_at: time, submitted_at: time}] }
+        let(:get_from_harvest_api) {double(get_from_harvest_api)}
+
+        before(:each) do
+          allow(@client).to(receive(:get_from_harvest_api)).with("/scorecards/1", {created_at: time, updated_at: time, interviewed_at: time, submitted_at: time})
+        end
+
+        it 'converts times to iso8601' do
+          expect(@client).to receive(:get_from_harvest_api).with("/scorecards/1", {created_at: time.iso8601, updated_at: time.iso8601, interviewed_at: time.iso8601, submitted_at: time.iso8601})
+          @client.all_scorecards(*method_args)
+        end
+      end
     end
 
     describe "#scheduled_interviews" do
-      before do
-        VCR.use_cassette('client/scheduled_interview') do
-          @scheduled_interview = @client.scheduled_interviews(id: 1)
+      context 'given an id' do
+        before do
+          VCR.use_cassette('client/scheduled_interview') do
+            @scheduled_interview = @client.scheduled_interviews(id: 1)
+          end
+        end
+
+        it "returns a response" do
+          expect(@scheduled_interview).to_not be_nil
+        end
+
+        it "returns a ScheduledInterview instance" do
+          expect(@scheduled_interview).to be_an_instance_of(GreenhouseIo::ScheduledInterview)
+        end
+
+        it "returns details of the interview" do
+          expect(@scheduled_interview).to have_key(:starts_at)
         end
       end
 
-      it "returns a response" do
-        expect(@scheduled_interview).to_not be_nil
-      end
+      context 'passes timestamp parameters' do
+        let(:time) { Time.now }
+        let(:method_args) { [{updated_after: time}] }
+        let(:get_resource) {double(get_resource)}
+        subject(:interviews) { @client.scheduled_interviews(*method_args) }
 
-      it "returns a ScheduledInterview instance" do
-        expect(@scheduled_interview).to be_an_instance_of(GreenhouseIo::ScheduledInterview)
-      end
+        before(:each) do
+          allow(@client).to(receive(:get_resource)).with(GreenhouseIo::ScheduledInterviewCollection, {updated_after: time})
+        end
 
-      it "returns details of the interview" do
-        expect(@scheduled_interview).to have_key(:starts_at)
+        it 'returns a response' do
+          expect(@client).to receive(:get_resource).with(GreenhouseIo::ScheduledInterviewCollection, {updated_after: time.iso8601})
+          @client.scheduled_interviews(*method_args)
+
+        end
       end
     end
 
@@ -569,6 +648,21 @@ describe GreenhouseIo::Client do
           expect(job).to have_key(:employment_type)
         end
       end
+
+      context 'passes timestamp parameters' do
+        let(:time) { Time.now }
+        let(:method_args) { [{created_at: time, updated_at: time, opened_at: time, closed_at: time}] }
+        let(:get_resource) {double(get_resource)}
+
+        before(:each) do
+          allow(@client).to(receive(:get_resource)).with(GreenhouseIo::JobCollection, {created_at: time, updated_at: time, opened_at: time, closed_at: time})
+        end
+
+        it 'converts times to iso8601' do
+          expect(@client).to receive(:get_resource).with(GreenhouseIo::JobCollection, {created_at: time.iso8601, updated_at: time.iso8601, opened_at: time.iso8601, closed_at: time.iso8601})
+          @client.jobs(*method_args)
+        end
+      end
     end
 
     describe "#stages" do
@@ -589,6 +683,21 @@ describe GreenhouseIo::Client do
       it "returns details of the interview" do
         expect(@stages.first).to have_key(:name)
       end
+
+      context 'passes timestamp parameters' do
+        let(:time) { Time.now }
+        let(:method_args) { [1, {created_at: time, updated_at: time}] }
+        let(:get_from_harvest_api) {double(get_from_harvest_api)}
+
+        before(:each) do
+          allow(@client).to(receive(:get_from_harvest_api)).with("/jobs/1/stages", {created_at: time, updated_at: time})
+        end
+
+        it 'converts times to iso8601' do
+          expect(@client).to receive(:get_from_harvest_api).with("/jobs/1/stages", {created_at: time.iso8601, updated_at: time.iso8601})
+          @client.stages(*method_args)
+        end
+      end
     end
 
     describe "#job_post" do
@@ -608,6 +717,21 @@ describe GreenhouseIo::Client do
 
       it "returns details of the interview" do
         expect(@job_post).to have_key(:title)
+      end
+
+      context 'passes timestamp parameters' do
+        let(:time) { Time.now }
+        let(:method_args) { [1, {created_at: time, updated_at: time, first_published_at: time}] }
+        let(:get_from_harvest_api) {double(get_from_harvest_api)}
+
+        before(:each) do
+          allow(@client).to(receive(:get_from_harvest_api)).with("/jobs/1/job_post", {created_at: time, updated_at: time, first_published_at: time})
+        end
+
+        it 'converts times to iso8601' do
+          expect(@client).to receive(:get_from_harvest_api).with("/jobs/1/job_post", {created_at: time.iso8601, updated_at: time.iso8601, first_published_at: time.iso8601})
+          @client.job_post(*method_args)
+        end
       end
     end
 
@@ -645,6 +769,21 @@ describe GreenhouseIo::Client do
 
         it "returns an user's details" do
           expect(@user).to have_key(:name)
+        end
+      end
+
+      context 'passes timestamp parameters' do
+        let(:time) { Time.now }
+        let(:method_args) { [{created_at: time, updated_at: time}] }
+        let(:get_resource) {double(get_resource)}
+
+        before(:each) do
+          allow(@client).to(receive(:get_resource)).with(GreenhouseIo::UserCollection, {created_at: time, updated_at: time})
+        end
+
+        it 'converts times to iso8601' do
+          expect(@client).to receive(:get_resource).with(GreenhouseIo::UserCollection, {created_at: time.iso8601, updated_at: time.iso8601})
+          @client.users(*method_args)
         end
       end
     end
@@ -731,6 +870,21 @@ describe GreenhouseIo::Client do
           expect(@offer[:status]).to be_a(String)
         end
       end
+
+      context 'passes timestamp parameters' do
+        let(:time) { Time.now }
+        let(:method_args) { [1, {created_at: time, updated_at: time, sent_at: time, starts_at: time}] }
+        let(:get_from_harvest_api) {double(get_from_harvest_api)}
+
+        before(:each) do
+          allow(@client).to(receive(:get_from_harvest_api)).with("/offers/1", {created_at: time, updated_at: time, sent_at: time, starts_at: time})
+        end
+
+        it 'converts times to iso8601' do
+          expect(@client).to receive(:get_from_harvest_api).with("/offers/1", {created_at: time.iso8601, updated_at: time.iso8601, sent_at: time.iso8601, starts_at: time.iso8601})
+          @client.offers(*method_args)
+        end
+      end
     end
 
     describe "#offers_for_application" do
@@ -751,6 +905,21 @@ describe GreenhouseIo::Client do
         expect(@offers.first).to have_key(:application_id)
         expect(@offers.first).to have_key(:version)
         expect(@offers.first).to have_key(:status)
+      end
+
+      context 'passes timestamp parameters' do
+        let(:time) { Time.now }
+        let(:method_args) { [1, {created_at: time, updated_at: time, sent_at: time, starts_at: time}] }
+        let(:get_from_harvest_api) {double(get_from_harvest_api)}
+
+        before(:each) do
+          allow(@client).to(receive(:get_from_harvest_api)).with("/applications/1/offers", {created_at: time, updated_at: time, sent_at: time, starts_at: time})
+        end
+
+        it 'converts times to iso8601' do
+          expect(@client).to receive(:get_from_harvest_api).with("/applications/1/offers", {created_at: time.iso8601, updated_at: time.iso8601, sent_at: time.iso8601, starts_at: time.iso8601})
+          @client.offers_for_application(*method_args)
+        end
       end
     end
 

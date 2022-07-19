@@ -30,7 +30,7 @@ module GreenhouseIo
     end
 
     def offers(id = nil, options = {})
-      get_from_harvest_api "/offers#{path_id(id)}", options
+      get_from_harvest_api "/offers#{path_id(id)}", normalize_params(options)
     end
 
     def departments(id = nil, options = {})
@@ -38,7 +38,7 @@ module GreenhouseIo
     end
 
     def candidates(options = {})
-      get_resource GreenhouseIo::CandidateCollection, options
+      get_resource GreenhouseIo::CandidateCollection, normalize_params(options)
     end
 
     def activity_feed(id, options = {})
@@ -70,11 +70,11 @@ module GreenhouseIo
     end
 
     def applications(options = {})
-      get_resource GreenhouseIo::ApplicationCollection, options
+      get_resource GreenhouseIo::ApplicationCollection, normalize_params(options)
     end
 
     def offers_for_application(id, options = {})
-      get_from_harvest_api "/applications/#{id}/offers", options
+      get_from_harvest_api "/applications/#{id}/offers", normalize_params(options)
     end
 
     def current_offer_for_application(id, options = {})
@@ -82,35 +82,35 @@ module GreenhouseIo
     end
 
     def scorecards(id, options = {})
-      get_from_harvest_api "/applications/#{id}/scorecards", options
+      get_from_harvest_api "/applications/#{id}/scorecards", normalize_params(options)
     end
 
     def all_scorecards(id = nil, options = {})
-      get_from_harvest_api "/scorecards/#{id}", options
+      get_from_harvest_api "/scorecards/#{id}", normalize_params(options)
     end
 
     def scheduled_interviews(options = {})
-      get_resource GreenhouseIo::ScheduledInterviewCollection, options
+      get_resource GreenhouseIo::ScheduledInterviewCollection, normalize_params(options)
     end
 
     def jobs(options = {})
-      get_resource GreenhouseIo::JobCollection, options
+      get_resource GreenhouseIo::JobCollection, normalize_params(options)
     end
 
     def stages(id, options = {})
-      get_from_harvest_api "/jobs/#{id}/stages", options
+      get_from_harvest_api "/jobs/#{id}/stages", normalize_params(options)
     end
 
     def job_stages(options = {})
-      get_resource GreenhouseIo::JobStageCollection, options
+      get_resource GreenhouseIo::JobStageCollection, normalize_params(options)
     end
 
     def job_post(id, options = {})
-      get_from_harvest_api "/jobs/#{id}/job_post", options
+      get_from_harvest_api "/jobs/#{id}/job_post", normalize_params(options)
     end
 
     def users(options = {})
-      get_resource GreenhouseIo::UserCollection, options
+      get_resource GreenhouseIo::UserCollection, normalize_params(options)
     end
 
     def sources(id = nil, options = {})
@@ -185,6 +185,15 @@ module GreenhouseIo
       self.rate_limit = headers['x-ratelimit-limit'].to_i
       self.rate_limit_remaining = headers['x-ratelimit-remaining'].to_i
       self.link = headers['link'].to_s
+    end
+
+    def normalize_params(params)
+      params.each do |key, value|
+        if value.respond_to?(:iso8601)
+          params[key] = value.iso8601
+        end
+      end
+      params
     end
   end
 end
