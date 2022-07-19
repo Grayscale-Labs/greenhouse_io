@@ -189,11 +189,10 @@ module GreenhouseIo
 
     def normalize_params(params)
       params.each do |key, value|
-        if value.instance_of?(Time)
+        if value.respond_to?(:iso8601)
           params[key] = value.iso8601
         end
       end
-
       params
     end
   end
