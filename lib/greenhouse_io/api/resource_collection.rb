@@ -23,6 +23,25 @@ module GreenhouseIo
       self.resource_class     = resource_class # e.g. GreenhouseIo::Application
       self.lazy_paginators    = [LazyPaginator.new(resource_collection: self, query_params: query_params)]
       self.hydrated_resources = []
+      self.hydrated_pages     = []
+    end
+
+    def each_page
+      return enum_for(:each_page) unless block_given?
+
+      i = 0
+      lazy_paginators.each do |lazy_paginator|
+        lazy_paginator.each_page do |page|
+          hydrated_pages.push(page) if hydrated_pages.length == i
+          hydrated_resources.push(*page.contents)
+          yield page
+          i += 1
+        end
+      end
+
+      self.all_resources_hydrated = true
+
+      hydrated_pages
     end
 
     def each
@@ -78,7 +97,7 @@ module GreenhouseIo
 
     protected
 
-    attr_accessor :lazy_paginators, :hydrated_resources, :all_resources_hydrated
+    attr_accessor :lazy_paginators, :hydrated_resources, :hydrated_pages, :all_resources_hydrated
 
     def all_resources_hydrated?
       !!all_resources_hydrated

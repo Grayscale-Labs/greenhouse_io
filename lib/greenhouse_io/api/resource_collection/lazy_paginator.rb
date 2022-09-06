@@ -5,6 +5,8 @@ require 'active_support/core_ext/object/blank'
 require 'active_support/core_ext/string/inflections'
 require 'link-header-parser'
 
+require 'greenhouse_io/api/resource_collection/page'
+
 module GreenhouseIo
   class ResourceCollection
     class LazyPaginator
@@ -18,6 +20,23 @@ module GreenhouseIo
         self.resource_collection = resource_collection
         self.query_params        = query_params
         self.hydrated_resources  = []
+        self.hydrated_pages      = []
+      end
+
+      def each_page
+        return enum_for(:each_page) unless block_given?
+
+        i = 0
+        loop do
+          if hydrated_pages.length == i
+            num_added_resources = request_next_page!
+            break if num_added_resources.zero?
+          end
+
+          yield hydrated_pages[i]
+          i += 1
+        end
+        hydrated_pages
       end
 
       def each
@@ -39,7 +58,7 @@ module GreenhouseIo
 
       private
 
-      attr_accessor :hydrated_resources, :next_page_url, :all_pages_requested
+      attr_accessor :hydrated_resources, :hydrated_pages, :next_page_url, :all_pages_requested
 
       # returns # of new resources
       def request_next_page!
@@ -68,7 +87,9 @@ module GreenhouseIo
         end
 
         # e.g. [...].map { |resource_hash| GreenhouseIo::Application.new(resource_hash) }
-        hydrated_resources.push(*resp_arr.map { |resource_hash| resource_class.new(resource_hash) })
+        results = resp_arr.map { |resource_hash| resource_class.new(resource_hash) }
+        hydrated_resources.push(*results)
+        hydrated_pages.push(Page.new(results, next_page_url: next_page_url))
 
         resp_arr.length
       end
