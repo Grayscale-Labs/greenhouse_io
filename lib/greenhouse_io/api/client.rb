@@ -73,6 +73,10 @@ module GreenhouseIo
       get_resource GreenhouseIo::ApplicationCollection, normalize_params(options)
     end
 
+    def get_application(id, options = {})
+      get_from_harvest_api "/applications/#{id}", normalize_params(options)
+    end
+
     def offers_for_application(id, options = {})
       get_from_harvest_api "/applications/#{id}/offers", normalize_params(options)
     end
