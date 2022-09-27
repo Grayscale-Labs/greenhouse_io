@@ -197,15 +197,6 @@ describe GreenhouseIo::Client do
             allow(GreenhouseIo::Client).to receive(:get).and_return(double('success?': false, headers: {}, code: code))
           end
 
-          context 'when rate-limiting encountered' do
-            let(:code) { 429 }
-
-            it 'retries' do
-              expect(@client).to(receive(:get_response)).thrice.and_call_original
-              suppress(GreenhouseIo::Error) { candidates.first }
-            end
-          end
-
           context 'when 5xx encountered' do
             let(:code) { 500 }
 
@@ -396,15 +387,6 @@ describe GreenhouseIo::Client do
         context do
           before(:each) do
             allow(GreenhouseIo::Client).to receive(:get).and_return(double('success?': false, headers: {}, code: code))
-          end
-
-          context 'when rate-limiting encountered' do
-            let(:code) { 429 }
-
-            it 'retries' do
-              expect(@client).to(receive(:get_response)).thrice.and_call_original
-              suppress(GreenhouseIo::Error) { applications.first }
-            end
           end
 
           context 'when 5xx encountered' do
@@ -613,13 +595,6 @@ describe GreenhouseIo::Client do
         context do
           before(:each) do
             allow(GreenhouseIo::Client).to receive(:get).and_return(double('success?': false, headers: {}, code: code))
-          end
-          context 'when rate-limiting encountered' do
-            let(:code) { 429 }
-            it 'retries' do
-              expect(@client).to(receive(:get_response)).thrice.and_call_original
-              suppress(GreenhouseIo::Error) { jobs.first }
-            end
           end
           context 'when 5xx encountered' do
             let(:code) { 500 }
