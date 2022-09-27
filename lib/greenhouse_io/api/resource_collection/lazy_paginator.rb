@@ -70,8 +70,8 @@ module GreenhouseIo
             client.get_from_harvest_api(next_page_url)
           else
             # If the id is part of the params, bring it out and append to URL
-            id = query_params.delete(:id)
-            client.get_from_harvest_api("#{resource_class::ENDPOINT}#{client.path_id(id)}", query_params)
+            ending = client.path_id(query_params[:id])
+            client.get_from_harvest_api("#{resource_class::ENDPOINT}#{ending}", query_params.except(:id))
           end
         end
 
