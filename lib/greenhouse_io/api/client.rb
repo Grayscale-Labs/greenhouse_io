@@ -12,8 +12,8 @@ module GreenhouseIo
     include HTTMultiParty
     include GreenhouseIo::API
 
+    # error cases that this gem will fast-fire retry
     RETRIABLE_ERRORS_REGEXP = /\A
-      429 | # rate-limiting
       5\d\d # 5xx errors
     \z/x.freeze
 
