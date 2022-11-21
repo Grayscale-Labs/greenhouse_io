@@ -16,11 +16,13 @@ module GreenhouseIo
 
       delegate :client, :resource_class, to: :resource_collection
 
-      def initialize(resource_collection:, query_params:)
+      # @param dry [Boolean] When true, we try to keep only `:dried` around in the hydration arrays
+      def initialize(resource_collection:, query_params:, dry: true)
         self.resource_collection = resource_collection
         self.query_params        = query_params
         self.hydrated_resources  = []
         self.hydrated_pages      = []
+        @dry = dry
       end
 
       def each_page
@@ -50,6 +52,7 @@ module GreenhouseIo
           end
 
           yield hydrated_resources[i]
+          hydrated_resources[i] = :dried if @dry
           i += 1
         end
 
@@ -89,7 +92,7 @@ module GreenhouseIo
         # e.g. [...].map { |resource_hash| GreenhouseIo::Application.new(resource_hash) }
         results = resp_arr.map { |resource_hash| resource_class.new(resource_hash) }
         hydrated_resources.push(*results)
-        hydrated_pages.push(Page.new(results, next_page_url: next_page_url))
+        hydrated_pages.push(Page.new(results, dry: @dry, next_page_url: next_page_url))
 
         resp_arr.length
       end

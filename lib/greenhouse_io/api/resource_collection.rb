@@ -18,12 +18,14 @@ module GreenhouseIo
 
     attr_accessor :client, :resource_class
 
-    def initialize(client:, query_params: {}, resource_class:)
+    # @param dry [Boolean] When true, we try to keep only `:dried` around in the hydration arrays
+    def initialize(client:, query_params: {}, resource_class:, dry: true)
       self.client             = client
       self.resource_class     = resource_class # e.g. GreenhouseIo::Application
       self.lazy_paginators    = [LazyPaginator.new(resource_collection: self, query_params: query_params)]
       self.hydrated_resources = []
       self.hydrated_pages     = []
+      @dry = dry
     end
 
     def each_page
@@ -50,7 +52,8 @@ module GreenhouseIo
       i = 0
       lazy_paginators.each do |lazy_paginator|
         lazy_paginator.each do |resource|
-          hydrated_resources << resource if hydrated_resources.length == i
+          to_store = @dry ? :dried : resource
+          hydrated_resources << to_store if hydrated_resources.length == i
           yield resource
           i += 1
         end
