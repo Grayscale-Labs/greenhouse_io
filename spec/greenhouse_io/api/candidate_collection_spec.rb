@@ -41,13 +41,13 @@ RSpec.describe GreenhouseIo::CandidateCollection do
   it 'blanks out records when .each is used' do
     all = candidates.each.to_a
     expect(all[0]).to be_a(GreenhouseIo::Candidate)
-    expect(candidates.count {|i| i == :dried }).to eq candidates.count
+    expect(candidates.count {|i| i == :dehydrated }).to eq candidates.count
   end
 
   it 'blanks out pages when .each is called' do
     all = candidates.each_page.to_a
     expect(all[0][0]).to be_a(GreenhouseIo::Candidate)
     all[0].each {}
-    expect(all[0][0]).to eq :dried
+    expect(all[0][0]).to eq :dehydrated
   end
 end

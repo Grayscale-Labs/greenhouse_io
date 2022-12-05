@@ -12,17 +12,17 @@ module GreenhouseIo
     class LazyPaginator
       include Enumerable
 
-      attr_accessor :resource_collection, :query_params
+      attr_accessor :resource_collection, :query_params, :dehydrate_after_iteration
 
       delegate :client, :resource_class, to: :resource_collection
 
-      # @param dry [Boolean] When true, we try to keep only `:dried` around in the hydration arrays
-      def initialize(resource_collection:, query_params:, dry: true)
+      # @param dehydrate_after_iteration [Boolean] When true, we try to keep only `:dehydrated` around in the hydration arrays
+      def initialize(resource_collection:, query_params:, dehydrate_after_iteration: true)
         self.resource_collection = resource_collection
         self.query_params        = query_params
         self.hydrated_resources  = []
         self.hydrated_pages      = []
-        @dry = dry
+        self.dehydrate_after_iteration = dehydrate_after_iteration
       end
 
       def each_page
@@ -52,7 +52,7 @@ module GreenhouseIo
           end
 
           yield hydrated_resources[i]
-          hydrated_resources[i] = :dried if @dry
+          hydrated_resources[i] = :dehydrated if dehydrate_after_iteration
           i += 1
         end
 
@@ -92,7 +92,8 @@ module GreenhouseIo
         # e.g. [...].map { |resource_hash| GreenhouseIo::Application.new(resource_hash) }
         results = resp_arr.map { |resource_hash| resource_class.new(resource_hash) }
         hydrated_resources.push(*results)
-        hydrated_pages.push(Page.new(results, dry: @dry, next_page_url: next_page_url))
+        new_page = Page.new(results, dehydrate_after_iteration: dehydrate_after_iteration, next_page_url: next_page_url)
+        hydrated_pages.push(new_page)
 
         resp_arr.length
       end
