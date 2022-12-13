@@ -5,14 +5,18 @@ module GreenhouseIo
 
       attr_reader :next_page_url, :contents
 
-      def initialize(contents, next_page_url: nil)
+      def initialize(contents, next_page_url: nil, dehydrate_after_iteration: true)
         @next_page_url = next_page_url
         @contents = contents
+        @dehydrate_after_iteration = dehydrate_after_iteration
       end
 
       def each
         return enum_for(:each) unless block_given?
-        contents.each { |item| yield item }
+        contents.map! do |item|
+          yield item
+          @dehydrate_after_iteration ? :dehydrated : item
+        end
       end
 
       def method_missing(method_name, *arguments, &block)
