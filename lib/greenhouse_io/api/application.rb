@@ -4,6 +4,6 @@ require 'greenhouse_io/api/resource'
 
 module GreenhouseIo
   class Application < Resource
-    ENDPOINT = "/applications"
+    DEFAULT_ENDPOINT = "/applications"
   end
 end
