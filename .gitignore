@@ -18,3 +18,5 @@ tmp
 *.un~
 .tags
 .ruby-version
+.DS_Store
+.vscode
