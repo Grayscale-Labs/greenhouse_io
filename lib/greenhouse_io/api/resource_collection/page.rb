@@ -3,10 +3,10 @@ module GreenhouseIo
     class Page
       include Enumerable
 
-      attr_reader :next_page_url, :contents
+      attr_reader :url, :contents
 
-      def initialize(contents, next_page_url: nil, dehydrate_after_iteration: true)
-        @next_page_url = next_page_url
+      def initialize(contents, url: nil, dehydrate_after_iteration: true)
+        @url = url
         @contents = contents
         @dehydrate_after_iteration = dehydrate_after_iteration
       end
