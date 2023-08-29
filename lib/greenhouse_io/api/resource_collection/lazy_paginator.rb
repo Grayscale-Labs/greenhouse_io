@@ -67,10 +67,12 @@ module GreenhouseIo
       def request_next_page!
         return 0 if all_pages_requested?
 
+        # "cache" this value before we update `next_page_url`, so we can provide it to the Page instance
+        new_page_url = next_page_url
         # TODO: have lower-level methods (e.g. #get_from_harvest_api) implement retries
         resp_arr = client.with_retries do
-          if next_page_url.present?
-            client.get_from_harvest_api(next_page_url)
+          if new_page_url.present?
+            client.get_from_harvest_api(new_page_url)
           else
             # If the id is part of the params, bring it out and append to URL
             ending = client.path_id(query_params[:id])
@@ -92,7 +94,7 @@ module GreenhouseIo
         # e.g. [...].map { |resource_hash| GreenhouseIo::Application.new(resource_hash) }
         results = resp_arr.map { |resource_hash| resource_class.new(resource_hash) }
         hydrated_resources.push(*results)
-        new_page = Page.new(results, dehydrate_after_iteration: dehydrate_after_iteration, next_page_url: next_page_url)
+        new_page = Page.new(results, dehydrate_after_iteration: dehydrate_after_iteration, url: new_page_url)
         hydrated_pages.push(new_page)
 
         resp_arr.length

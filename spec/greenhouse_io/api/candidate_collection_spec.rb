@@ -14,11 +14,11 @@ RSpec.describe GreenhouseIo::CandidateCollection do
     last   = pages.last
 
     aggregate_failures do
-      expect(first.next_page_url).to match(/page=2&per_page=100/)
+      expect(first.url).to be_nil
       expect(first.length).to eq(100)
       expect(first.first).to be_instance_of(GreenhouseIo::Candidate)
 
-      expect(last.next_page_url).to be_nil
+      expect(last.url).to match(/page=3&per_page=100/)
       expect(last.length).to eq(18)
     end
   end
