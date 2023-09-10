@@ -19,10 +19,20 @@ module GreenhouseIo
     attr_accessor :client, :resource_class, :dehydrate_after_iteration
 
     # @param dehydrate_after_iteration [Boolean] When true, we try to keep only `:dehydrated` around in the hydration arrays
-    def initialize(client:, query_params: {}, resource_class:, dehydrate_after_iteration: true)
+    def initialize(client:, endpoint: nil, query_params: {}, resource_class:, dehydrate_after_iteration: true)
       self.client             = client
       self.resource_class     = resource_class # e.g. GreenhouseIo::Application
-      self.lazy_paginators    = [LazyPaginator.new(resource_collection: self, query_params: query_params)]
+      endpoint ||= resource_class::DEFAULT_ENDPOINT
+      endpoint = "#{endpoint}#{client.path_id(query_params[:id])}"
+
+      self.lazy_paginators    = [
+        LazyPaginator.new(
+          resource_collection: self,
+          endpoint: endpoint,
+          query_params: query_params.except(:id),
+          dehydrate_after_iteration: dehydrate_after_iteration
+        )
+      ]
       self.hydrated_resources = []
       self.hydrated_pages     = []
       self.dehydrate_after_iteration = dehydrate_after_iteration

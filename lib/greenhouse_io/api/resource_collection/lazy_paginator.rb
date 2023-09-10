@@ -12,13 +12,14 @@ module GreenhouseIo
     class LazyPaginator
       include Enumerable
 
-      attr_accessor :resource_collection, :query_params, :dehydrate_after_iteration
+      attr_accessor :resource_collection, :endpoint, :query_params, :dehydrate_after_iteration
 
       delegate :client, :resource_class, to: :resource_collection
 
       # @param dehydrate_after_iteration [Boolean] When true, we try to keep only `:dehydrated` around in the hydration arrays
-      def initialize(resource_collection:, query_params:, dehydrate_after_iteration: true)
+      def initialize(resource_collection:, endpoint:, query_params:, dehydrate_after_iteration: true)
         self.resource_collection = resource_collection
+        self.endpoint            = endpoint
         self.query_params        = query_params
         self.hydrated_resources  = []
         self.hydrated_pages      = []
@@ -74,9 +75,7 @@ module GreenhouseIo
           if new_page_url.present?
             client.get_from_harvest_api(new_page_url)
           else
-            # If the id is part of the params, bring it out and append to URL
-            ending = client.path_id(query_params[:id])
-            client.get_from_harvest_api("#{resource_class::ENDPOINT}#{ending}", query_params.except(:id))
+            client.get_from_harvest_api(endpoint, query_params)
           end
         end
 

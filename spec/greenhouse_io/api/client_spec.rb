@@ -211,13 +211,13 @@ describe GreenhouseIo::Client do
           let(:time) { Time.now }
           let(:method_args) { [{created_at: time, updated_at: time, last_activity: time}] }
           let(:get_resource) {double(get_resource)}
-  
+
           before(:each) do
             allow(@client).to(receive(:get_resource)).with(GreenhouseIo::CandidateCollection, {created_at: time, updated_at: time, last_activity: time})
           end
-  
+
           it 'converts times to iso8601' do
-            expect(@client).to receive(:get_resource).with(GreenhouseIo::CandidateCollection, {created_at: time.iso8601, updated_at: time.iso8601, last_activity: time.iso8601})
+            expect(@client).to receive(:get_resource).with(GreenhouseIo::CandidateCollection, {created_at: time.iso8601, updated_at: time.iso8601, last_activity: time.iso8601}, {})
             @client.candidates(*method_args)
           end
         end
@@ -438,11 +438,11 @@ describe GreenhouseIo::Client do
         let(:get_resource) {double(get_resource)}
 
         before(:each) do
-          allow(@client).to(receive(:get_resource)).with(GreenhouseIo::ApplicationCollection, {applied_at: time, rejected_at: time, last_activity_at: time})
+          allow(@client).to(receive(:get_resource)).with(GreenhouseIo::ApplicationCollection, {applied_at: time, rejected_at: time, last_activity_at: time}, {})
         end
 
         it 'converts times to iso8601' do
-          expect(@client).to receive(:get_resource).with(GreenhouseIo::ApplicationCollection, {applied_at: time.iso8601, rejected_at: time.iso8601, last_activity_at: time.iso8601})
+          expect(@client).to receive(:get_resource).with(GreenhouseIo::ApplicationCollection, {applied_at: time.iso8601, rejected_at: time.iso8601, last_activity_at: time.iso8601}, {})
           @client.applications(*method_args)
         end
       end
@@ -539,6 +539,32 @@ describe GreenhouseIo::Client do
         end
       end
 
+      context 'given an application_id' do
+        let(:fake_api_token) { ENV['GREENHOUSE_API_TOKEN'] }
+
+        before do
+          VCR.use_cassette('client/application_scheduled_interviews') do
+            @application_scheduled_interviews = @client.scheduled_interviews(
+              application_id: 165646508002,
+              dehydrate_after_iteration: false
+            )
+            @application_scheduled_interviews.count # cause lazy paginator to execute its query(s)
+          end
+        end
+
+        it "returns a response" do
+          expect(@application_scheduled_interviews).to_not be_empty
+        end
+
+        it "returns ScheduledInterview instances" do
+          expect(@application_scheduled_interviews.first).to be_an_instance_of(GreenhouseIo::ScheduledInterview)
+        end
+
+        it "returns details of the interviews" do
+          expect(@application_scheduled_interviews.first).to have_key(:start)
+        end
+      end
+
       context 'passes timestamp parameters' do
         let(:time) { Time.now }
         let(:method_args) { [{updated_after: time}] }
@@ -546,11 +572,11 @@ describe GreenhouseIo::Client do
         subject(:interviews) { @client.scheduled_interviews(*method_args) }
 
         before(:each) do
-          allow(@client).to(receive(:get_resource)).with(GreenhouseIo::ScheduledInterviewCollection, {updated_after: time})
+          allow(@client).to(receive(:get_resource)).with(GreenhouseIo::ScheduledInterviewCollection, {updated_after: time}, {})
         end
 
         it 'returns a response' do
-          expect(@client).to receive(:get_resource).with(GreenhouseIo::ScheduledInterviewCollection, {updated_after: time.iso8601})
+          expect(@client).to receive(:get_resource).with(GreenhouseIo::ScheduledInterviewCollection, {updated_after: time.iso8601}, {})
           @client.scheduled_interviews(*method_args)
 
         end
@@ -634,7 +660,7 @@ describe GreenhouseIo::Client do
         end
 
         it 'converts times to iso8601' do
-          expect(@client).to receive(:get_resource).with(GreenhouseIo::JobCollection, {created_at: time.iso8601, updated_at: time.iso8601, opened_at: time.iso8601, closed_at: time.iso8601})
+          expect(@client).to receive(:get_resource).with(GreenhouseIo::JobCollection, {created_at: time.iso8601, updated_at: time.iso8601, opened_at: time.iso8601, closed_at: time.iso8601}, {})
           @client.jobs(*method_args)
         end
       end
@@ -757,7 +783,7 @@ describe GreenhouseIo::Client do
         end
 
         it 'converts times to iso8601' do
-          expect(@client).to receive(:get_resource).with(GreenhouseIo::UserCollection, {created_at: time.iso8601, updated_at: time.iso8601})
+          expect(@client).to receive(:get_resource).with(GreenhouseIo::UserCollection, {created_at: time.iso8601, updated_at: time.iso8601}, {})
           @client.users(*method_args)
         end
       end

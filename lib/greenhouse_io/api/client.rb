@@ -30,7 +30,8 @@ module GreenhouseIo
     end
 
     def offers(id = nil, options = {})
-      get_from_harvest_api "/offers#{path_id(id)}", normalize_params(options)
+      _kw_args, params = normalize_options(options)
+      get_from_harvest_api "/offers#{path_id(id)}", params
     end
 
     def departments(id = nil, options = {})
@@ -38,7 +39,8 @@ module GreenhouseIo
     end
 
     def candidates(options = {})
-      get_resource GreenhouseIo::CandidateCollection, normalize_params(options)
+      kw_args, params = normalize_options(options)
+      get_resource GreenhouseIo::CandidateCollection, params, **kw_args
     end
 
     def activity_feed(id, options = {})
@@ -70,11 +72,13 @@ module GreenhouseIo
     end
 
     def applications(options = {})
-      get_resource GreenhouseIo::ApplicationCollection, normalize_params(options)
+      kw_args, params = normalize_options(options)
+      get_resource GreenhouseIo::ApplicationCollection, params, **kw_args
     end
 
     def offers_for_application(id, options = {})
-      get_from_harvest_api "/applications/#{id}/offers", normalize_params(options)
+      _kw_args, params = normalize_options(options)
+      get_from_harvest_api "/applications/#{id}/offers", params
     end
 
     def current_offer_for_application(id, options = {})
@@ -82,35 +86,43 @@ module GreenhouseIo
     end
 
     def scorecards(id, options = {})
-      get_from_harvest_api "/applications/#{id}/scorecards", normalize_params(options)
+      _kw_args, params = normalize_options(options)
+      get_from_harvest_api "/applications/#{id}/scorecards", params
     end
 
     def all_scorecards(id = nil, options = {})
-      get_from_harvest_api "/scorecards/#{id}", normalize_params(options)
+      _kw_args, params = normalize_options(options)
+      get_from_harvest_api "/scorecards/#{id}", params
     end
 
     def scheduled_interviews(options = {})
-      get_resource GreenhouseIo::ScheduledInterviewCollection, normalize_params(options)
+      kw_args, params = normalize_options(options)
+      get_resource GreenhouseIo::ScheduledInterviewCollection, params, **kw_args
     end
 
     def jobs(options = {})
-      get_resource GreenhouseIo::JobCollection, normalize_params(options)
+      kw_args, params = normalize_options(options)
+      get_resource GreenhouseIo::JobCollection, params, **kw_args
     end
 
     def stages(id, options = {})
-      get_from_harvest_api "/jobs/#{id}/stages", normalize_params(options)
+      _kw_args, params = normalize_options(options)
+      get_from_harvest_api "/jobs/#{id}/stages", params
     end
 
     def job_stages(options = {})
-      get_resource GreenhouseIo::JobStageCollection, normalize_params(options)
+      kw_args, params = normalize_options(options)
+      get_resource GreenhouseIo::JobStageCollection, params, **kw_args
     end
 
     def job_post(id, options = {})
-      get_from_harvest_api "/jobs/#{id}/job_post", normalize_params(options)
+      _kw_args, params = normalize_options(options)
+      get_from_harvest_api "/jobs/#{id}/job_post", params
     end
 
     def users(options = {})
-      get_resource GreenhouseIo::UserCollection, normalize_params(options)
+      kw_args, params = normalize_options(options)
+      get_resource GreenhouseIo::UserCollection, params, **kw_args
     end
 
     def sources(id = nil, options = {})
@@ -170,8 +182,12 @@ module GreenhouseIo
 
     attr_accessor :using_with_retries # see #with_retries
 
-    def get_resource(resource_class, options)
-      resource_collection = resource_class.new(client: self, query_params: options)
+    def get_resource(resource_class, options, dehydrate_after_iteration: true)
+      resource_collection = resource_class.new(
+        client: self,
+        query_params: options,
+        dehydrate_after_iteration: dehydrate_after_iteration
+      )
 
       # Options hash must use symbols as keys!
       if options.has_key?(:id)
@@ -187,13 +203,17 @@ module GreenhouseIo
       self.link = headers['link'].to_s
     end
 
-    def normalize_params(params)
+    def normalize_options(options)
+      kw_arg_keys = %i[dehydrate_after_iteration]
+      kw_args, params = options.slice(*kw_arg_keys), options.except(*kw_arg_keys)
+
       params.each do |key, value|
         if value.respond_to?(:iso8601)
           params[key] = value.iso8601
         end
       end
-      params
+
+      [kw_args, params]
     end
   end
 end
