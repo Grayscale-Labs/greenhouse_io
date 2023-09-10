@@ -701,6 +701,70 @@ describe GreenhouseIo::Client do
       end
     end
 
+    describe "#job_stages" do
+      let(:fake_api_token) { ENV['GREENHOUSE_API_TOKEN'] }
+
+      context 'given an id' do
+        before do
+          VCR.use_cassette('client/job_stages') do
+            @job_stage = @client.job_stages(id: 8404059002)
+          end
+        end
+
+        it "returns a response" do
+          expect(@job_stage).to_not be_nil
+        end
+
+        it "returns a JobStage instance" do
+          expect(@job_stage).to be_an_instance_of(GreenhouseIo::JobStage)
+        end
+
+        it "returns details of the job_stage" do
+          expect(@job_stage).to have_key(:name)
+        end
+      end
+
+      context 'given a job_id' do
+        before do
+          VCR.use_cassette('client/job_job_stages') do
+            @job_job_stages = @client.job_stages(
+              job_id: 4576745002,
+              dehydrate_after_iteration: false
+            )
+            @job_job_stages.count # cause lazy paginator to execute its query(s)
+          end
+        end
+
+        it "returns a response" do
+          expect(@job_job_stages).to_not be_empty
+        end
+
+        it "returns JobStage instances" do
+          expect(@job_job_stages.first).to be_an_instance_of(GreenhouseIo::JobStage)
+        end
+
+        it "returns details of the job stages" do
+          expect(@job_job_stages.first).to have_key(:name)
+        end
+      end
+
+      context 'passes timestamp parameters' do
+        let(:time) { Time.now }
+        let(:method_args) { [{updated_after: time}] }
+        let(:get_resource) {double(get_resource)}
+        subject(:interviews) { @client.job_stages(*method_args) }
+
+        before(:each) do
+          allow(@client).to(receive(:get_resource)).with(GreenhouseIo::JobStageCollection, {updated_after: time}, {})
+        end
+
+        it 'returns a response' do
+          expect(@client).to receive(:get_resource).with(GreenhouseIo::JobStageCollection, {updated_after: time.iso8601}, {})
+          @client.job_stages(*method_args)
+        end
+      end
+    end
+
     describe "#job_post" do
       before do
         VCR.use_cassette('client/job_post') do
