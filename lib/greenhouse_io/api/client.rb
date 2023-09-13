@@ -4,6 +4,7 @@ require 'greenhouse_io/api/scheduled_interview_collection'
 require 'greenhouse_io/api/job_collection'
 require 'greenhouse_io/api/job_stage_collection'
 require 'greenhouse_io/api/user_collection'
+require 'greenhouse_io/api/offer' # TODO: make changes to return an "OfferCollection" from /offers query
 
 require 'retriable'
 
