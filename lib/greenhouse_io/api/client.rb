@@ -130,14 +130,14 @@ module GreenhouseIo
       get_from_harvest_api "/sources#{path_id(id)}", options
     end
 
-    def move_application(id, from_stage_id, to_stage_id)
+    def move_application(id, from_stage_id, to_stage_id, on_behalf_of)
       post_to_harvest_api(
         "/applications/#{id}/move",
         {
-          from_stage_id:,
-          to_stage_id:
+          from_stage_id: from_stage_id.to_i,
+          to_stage_id:   to_stage_id.to_i
         },
-        {}
+        { 'On-Behalf-Of' => on_behalf_of.to_s }
       )
     end
 
