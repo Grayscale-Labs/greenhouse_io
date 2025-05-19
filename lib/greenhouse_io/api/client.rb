@@ -117,7 +117,7 @@ module GreenhouseIo
       get_resource GreenhouseIo::JobStageCollection, params, **kw_args
     end
 
-    def job_posts(id, options = {})
+    def job_posts(options = {})
       kw_args, params = normalize_options(options)
       get_resource GreenhouseIo::JobPostCollection, params, **kw_args
     end
