@@ -79,7 +79,7 @@ module GreenhouseIo
           end
         end
 
-        links = LinkHeaderParser.parse(client.link.to_s, base: client.class.base_uri)
+        links = LinkHeaderParser.parse(client.link.to_s, base_uri: client.class.base_uri)
         self.next_page_url       = links.find { |link| link.relation_types == ['next'] }&.target_uri
         self.all_pages_requested = next_page_url.nil?
 
