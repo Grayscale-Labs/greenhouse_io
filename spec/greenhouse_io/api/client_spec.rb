@@ -765,41 +765,6 @@ describe GreenhouseIo::Client do
       end
     end
 
-    describe "#job_post" do
-      before do
-        VCR.use_cassette('client/job_post') do
-          @job_post = @client.job_post(4690)
-        end
-      end
-
-      it "returns a response" do
-        expect(@job_post).to_not be_nil
-      end
-
-      it "returns an array of scheduled interviews" do
-        expect(@job_post).to be_an_instance_of(Hash)
-      end
-
-      it "returns details of the interview" do
-        expect(@job_post).to have_key(:title)
-      end
-
-      context 'passes timestamp parameters' do
-        let(:time) { Time.now }
-        let(:method_args) { [1, {created_at: time, updated_at: time, first_published_at: time}] }
-        let(:get_from_harvest_api) {double(get_from_harvest_api)}
-
-        before(:each) do
-          allow(@client).to(receive(:get_from_harvest_api)).with("/jobs/1/job_post", {created_at: time, updated_at: time, first_published_at: time})
-        end
-
-        it 'converts times to iso8601' do
-          expect(@client).to receive(:get_from_harvest_api).with("/jobs/1/job_post", {created_at: time.iso8601, updated_at: time.iso8601, first_published_at: time.iso8601})
-          @client.job_post(*method_args)
-        end
-      end
-    end
-
     describe "#users" do
       context "given an empty hash", vcr: { cassette_name: 'client/users' } do
         before do

@@ -2,6 +2,7 @@ require 'greenhouse_io/api/application_collection'
 require 'greenhouse_io/api/candidate_collection'
 require 'greenhouse_io/api/scheduled_interview_collection'
 require 'greenhouse_io/api/job_collection'
+require 'greenhouse_io/api/job_post_collection'
 require 'greenhouse_io/api/job_stage_collection'
 require 'greenhouse_io/api/user_collection'
 require 'greenhouse_io/api/offer' # TODO: make changes to return an "OfferCollection" from /offers query
@@ -116,9 +117,9 @@ module GreenhouseIo
       get_resource GreenhouseIo::JobStageCollection, params, **kw_args
     end
 
-    def job_post(id, options = {})
-      _kw_args, params = normalize_options(options)
-      get_from_harvest_api "/jobs/#{id}/job_post", params
+    def job_posts(id, options = {})
+      kw_args, params = normalize_options(options)
+      get_resource GreenhouseIo::JobPostCollection, params, **kw_args
     end
 
     def users(options = {})
