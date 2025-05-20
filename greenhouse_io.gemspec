@@ -20,7 +20,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency('activesupport')
   spec.add_runtime_dependency('hashie')
   spec.add_runtime_dependency('httmultiparty', '~> 0.3.16')
-  spec.add_runtime_dependency('link-header-parser')
+  spec.add_runtime_dependency('link-header-parser', '~> 7.0.1')
   spec.add_runtime_dependency('retriable')
   spec.required_ruby_version = '>= 2.6.6'
 
