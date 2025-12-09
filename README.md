@@ -5,6 +5,7 @@ Version](https://badge.fury.io/rb/greenhouse_io.png)](http://badge.fury.io/rb/gr
 [![Build Status](https://travis-ci.org/grnhse/greenhouse_io.svg?branch=master)](https://travis-ci.org/grnhse/greenhouse_io)
 [![Test Coverage](https://codeclimate.com/github/grnhse/greenhouse_io/badges/coverage.svg)](https://codeclimate.com/github/grnhse/greenhouse_io/coverage)
 [![Dependency Status](https://gemnasium.com/grnhse/greenhouse_io.svg)](https://gemnasium.com/grnhse/greenhouse_io)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FGrayscale-Labs%2Fgreenhouse_io.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FGrayscale-Labs%2Fgreenhouse_io?ref=badge_shield)
 
 A Ruby interface to
 [Greenhouse.io's](https://app.greenhouse.io/jobboard/jsonp_instructions)
@@ -198,3 +199,6 @@ Methods for which an `id` is **required**:
 5. Create new Pull Request
 
 Contributions are always welcome!
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FGrayscale-Labs%2Fgreenhouse_io.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FGrayscale-Labs%2Fgreenhouse_io?ref=badge_large)
