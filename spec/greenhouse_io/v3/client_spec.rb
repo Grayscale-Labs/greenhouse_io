@@ -72,7 +72,7 @@ RSpec.describe GreenhouseIo::V3::Client do
           .with(headers: { "Authorization" => "Bearer expired_token" })
           .to_return(status: 401, body: '{"message":"Unauthorized"}', headers: default_response_headers)
 
-        stub_request(:post, /auth\.greenhouse\.io\/token/)
+        stub_request(:post, "https://auth.greenhouse.io/token")
           .to_return(status: 200, body: JSON.dump(token_response), headers: { "Content-Type" => "application/json" })
 
         stub_request(:get, /harvest\.greenhouse\.io\/v3/)

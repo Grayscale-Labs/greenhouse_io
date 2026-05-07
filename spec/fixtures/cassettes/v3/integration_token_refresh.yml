@@ -1,0 +1,297 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://auth.greenhouse.io/token
+    body:
+      encoding: UTF-8
+      string: grant_type=client_credentials&sub=5414812002
+    headers:
+      Authorization:
+      - Basic <V3_BASIC_AUTH>
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+      Content-Type:
+      - application/x-www-form-urlencoded
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Date:
+      - Thu, 07 May 2026 17:18:51 GMT
+      Vary:
+      - Accept,Accept-Encoding
+      Cache-Control:
+      - private, no-store
+      Expires:
+      - '0'
+      Pragma:
+      - no-cache
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Ratelimit-Limit:
+      - '60'
+      X-Ratelimit-Remaining:
+      - '57'
+      X-Ratelimit-Reset:
+      - '1778174391'
+      Etag:
+      - W/"491b1ffedeafabe72b940b8d659c9fba"
+      X-Request-Id:
+      - 047b5ee69cd3c3ff004cd75e87d6a115
+      X-Runtime:
+      - '0.059071'
+      X-Frame-Options:
+      - sameorigin
+      X-Content-Type-Options:
+      - nosniff
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Download-Options:
+      - noopen
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+      Content-Security-Policy:
+      - 'default-src ''self''; connect-src ''self'' d3b3ehuo35wzeh.cloudfront.net
+        api.mapbox.com docs.google.com/feeds/download/documents/export/Export *.browser-intake-datadoghq.com
+        browser-intake-datadoghq.com api.recurly.com boards-api.greenhouse.io grnhse-prod-jben-us-east-1.s3.us-east-1.amazonaws.com
+        grnhse-prod-jben-us-east-1.s3-us-east-1.amazonaws.com grnhse-prod-jben-us-east-1.s3.amazonaws.com
+        s2-recruiting.cdn.greenhouse.io grnhse-use1-prod-s2-ghr.s3.us-east-1.amazonaws.com
+        grnhse-use1-prod-s2-ghr.s3-us-east-1.amazonaws.com grnhse-use1-prod-s2-ghr.s3.amazonaws.com
+        grnhse-use1-prod-ghr-migrations.s3.us-east-1.amazonaws.com grnhse-use1-prod-ghr-migrations.s3-us-east-1.amazonaws.com
+        grnhse-use1-prod-ghr-migrations.s3.amazonaws.com grnhse-dochouse-prod.s3.us-east-1.amazonaws.com
+        grnhse-dochouse-prod.s3-us-east-1.amazonaws.com grnhse-dochouse-prod.s3.amazonaws.com
+        email-address-validator.us.greenhouse.io www.google-analytics.com ssl.google-analytics.com
+        support.greenhouse.io *.googleapis.com *.googleusercontent.com *.walkme.com
+        wss://*.greenhouse.io static.zdassets.com ekr.zdassets.com ekr.zendesk.com
+        greenhouse.zendesk.com wss://greenhouse.zendesk.com *.zopim.com wss://*.zopim.com
+        zendesk-eu.my.sentry.io api.rollbar.com api.smartling.com api.geocode.earth
+        https://api-geocode-earth-proxy.greenhouse.io/ https://interseller.greenhouse.io
+        c.spl.greenhouse.io eppo.cloud wss://*.zoom.us https://*.zoom.us *.amplitude.com
+        prod-jben.prod-use1-0.gh.internal; font-src ''self'' data: cdnjs.cloudflare.com
+        css.zohostatic.com d33zkqzv7i9ae0.cloudfront.net d3b3ehuo35wzeh.cloudfront.net
+        fonts.gstatic.com sxt.cdn.skype.com safari-extension://* s2-recruiting.cdn.greenhouse.io
+        grnhse-use1-prod-s2-ghr.s3.us-east-1.amazonaws.com grnhse-use1-prod-s2-ghr.s3-us-east-1.amazonaws.com
+        grnhse-use1-prod-s2-ghr.s3.amazonaws.com grnhse-use1-prod-ghr-migrations.s3.us-east-1.amazonaws.com
+        grnhse-use1-prod-ghr-migrations.s3-us-east-1.amazonaws.com grnhse-use1-prod-ghr-migrations.s3.amazonaws.com
+        *.walkme.com *.zopim.com recruiting.cdn.greenhouse.io; frame-src ''self''
+        d3b3ehuo35wzeh.cloudfront.net accounts.google.com analytics.recruitics.com
+        api.recurly.com apis.google.com app.intralca.com/LCAWidget/ compose.mixmax.com
+        conv.indeed.com docs.google.com/picker z1fpkbyft3qn.statuspage.io greenhouse.zendesk.com
+        greenhouse.zendesk.com/embeddable/config platform.linkedin.com player.vimeo.com
+        postingcentreintegration.adcourier.com/posting_centre/view production.360social.me
+        support.greenhouse.io www.adcourier.com www.google.com www.linkedin.com www.youtube.com
+        www.google.com/recaptcha/ www.gstatic.com/recaptcha/ s2-recruiting.cdn.greenhouse.io
+        grnhse-use1-prod-s2-ghr.s3.us-east-1.amazonaws.com grnhse-use1-prod-s2-ghr.s3-us-east-1.amazonaws.com
+        grnhse-use1-prod-s2-ghr.s3.amazonaws.com grnhse-use1-prod-ghr-migrations.s3.us-east-1.amazonaws.com
+        grnhse-use1-prod-ghr-migrations.s3-us-east-1.amazonaws.com grnhse-use1-prod-ghr-migrations.s3.amazonaws.com
+        https://prod-job-boards.prod-use1-0.greenhouse.io job-boards.greenhouse.io
+        job-boards.cdn.greenhouse.io *.googleapis.com *.walkme.com app.forethought.ai
+        solve-widget.forethought.ai form.typeform.com fast.wistia.net www.adobe.com
+        acrs.adobe.com static.echocdn.com *.echosignsandbox.com *.echosign.com *.adobesign.com
+        *.adobesigncdn.com *.zoom.us messaging.us.greenhouse.io greenhouse-inapp.partnerfleet.app
+        blob: https://analytics.greenhouse.io https://pdf-viewer.cdn.greenhouse.io;
+        img-src * data: blob:; media-src * data: blob:; script-src ''self'' ''unsafe-eval''
+        d3b3ehuo35wzeh.cloudfront.net d3sbxpiag177w8.cloudfront.net accounts.google.com
+        analytics.recruitics.com api.recurly.com apis.google.com app.intralca.com/LCAWidget/
+        conv.indeed.com d27j601g4x0gd5.cloudfront.net d37gvrvc0wt4s1.cloudfront.net
+        www.datadoghq-browser-agent.com firefly-071591.s3.amazonaws.com/scripts/ js.recurly.com
+        maps.gstatic.com m.addthisedge.com npmcdn.com/redux-thunk@2.0.1/dist/redux-thunk.min.js
+        pixel.appcast.io platform.linkedin.com s3.amazonaws.com/s3.maketutorial.com
+        s2-recruiting.cdn.greenhouse.io grnhse-use1-prod-s2-ghr.s3.us-east-1.amazonaws.com
+        grnhse-use1-prod-s2-ghr.s3-us-east-1.amazonaws.com grnhse-use1-prod-s2-ghr.s3.amazonaws.com
+        grnhse-use1-prod-ghr-migrations.s3.us-east-1.amazonaws.com grnhse-use1-prod-ghr-migrations.s3-us-east-1.amazonaws.com
+        grnhse-use1-prod-ghr-migrations.s3.amazonaws.com boards.cdn.greenhouse.io
+        boards-cdn.greenhouse.io grnhse-prod-jben-us-east-1.s3.us-east-1.amazonaws.com
+        grnhse-prod-jben-us-east-1.s3-us-east-1.amazonaws.com grnhse-prod-jben-us-east-1.s3.amazonaws.com
+        https://prod-job-boards.prod-use1-0.greenhouse.io job-boards.greenhouse.io
+        job-boards.cdn.greenhouse.io tagmanager.google.com www.googletagmanager.com
+        ssl.google-analytics.com unpkg.com/redux@3.6.0/dist/redux.min.js www.dropbox.com/static/api/2/dropins.js
+        www.google.com/js/ www.google.com/recaptcha/ www.gstatic.com/recaptcha/ www.linkedin.com
+        z1fpkbyft3qn.statuspage.io static.zdassets.com ekr.zdassets.com ekr.zendesk.com
+        greenhouse.zendesk.com wss://greenhouse.zendesk.com *.zopim.com wss://*.zopim.com
+        zendesk-eu.my.sentry.io safari-extension://* *.googleapis.com *.walkme.com
+        app.forethought.ai solve-widget.forethought.ai www.google-analytics.com www.googletagmanager.com/gtm.js
+        d2c7xlmseob604.cloudfront.net api.smartling.com *.amplitude.com *.zoom.us
+        greenhouse-inapp.partnerfleet.app ''nonce-h+K+I9W3It+eGY5HC5B2/bP9UTFPt/fiCAaHoHfMbug='';
+        style-src ''self'' ''unsafe-inline'' sdk.mixmax.com d3b3ehuo35wzeh.cloudfront.net
+        grnhse-use1-prod-s2-ghr.s3.us-east-1.amazonaws.com grnhse-use1-prod-s2-ghr.s3-us-east-1.amazonaws.com
+        grnhse-use1-prod-s2-ghr.s3.amazonaws.com grnhse-use1-prod-ghr-migrations.s3.us-east-1.amazonaws.com
+        grnhse-use1-prod-ghr-migrations.s3-us-east-1.amazonaws.com grnhse-use1-prod-ghr-migrations.s3.amazonaws.com
+        boards.cdn.greenhouse.io boards-cdn.greenhouse.io s2-recruiting.cdn.greenhouse.io
+        tagmanager.google.com/ *.googleapis.com *.walkme.com *.amplitude.com; worker-src
+        blob:; report-uri https://csp-report.browser-intake-datadoghq.com/api/v2/logs?dd-api-key=pubc838ef47eadc5ad8b1201d22652660a9&dd-evp-origin=content-security-policy&ddsource=csp-report&ddtags=silo%3A2%2Cenvironment%3Aproduction'
+      X-Cache:
+      - Miss from cloudfront
+      Via:
+      - 1.1 d45137f973d454db77c647196f56613a.cloudfront.net (CloudFront)
+      X-Amz-Cf-Pop:
+      - IAD61-P2
+      X-Amz-Cf-Id:
+      - wmwjVNj2iaelocXDS538toEGCmU7cctMeDoYFyqcA7e24AfQU61V0w==
+    body:
+      encoding: ASCII-8BIT
+      string: '{"token_type":"Bearer","access_token":"<V3_ACCESS_TOKEN>","expires_at":"2026-05-07T18:18:51Z"}'
+    http_version:
+  recorded_at: Thu, 07 May 2026 17:18:51 GMT
+- request:
+    method: get
+    uri: https://harvest.greenhouse.io/v3/jobs?per_page=1
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Authorization:
+      - Bearer eyJraWQiOiI0ZDA0OGYxOTg2ZDJkMWFiYmE5NmJmYzVmZmY2YWNlNTc2YWRlNzk0NTQxN2NhZDZhYmEzZDczOTFlMTJhMDc4IiwiYWxnIjoiUlMyNTYifQ.eyJpc3MiOiJhdXRoLmdyZWVuaG91c2UuaW8iLCJzdWIiOjU0MTQ4MTIwMDIsImF1ZCI6WyJoYXJ2ZXN0LmdyZWVuaG91c2UuaW8iXSwiZXhwIjoxNzc4MTc3OTMxLCJpYXQiOjE3NzgxNzQzMzEsImp0aSI6IlJ2b0E1NHhnait6S1RXdnpOMGRoTmtpRmFwZnBNNHl2MVpqUVhlK3JuSEtKVlNuWHhBc21kbHZvcm9QZjZkNWUiLCJzY29wZSI6ImF1ZGl0bG9nOmV2ZW50czpsaXN0IGhhcnZlc3Q6YXBwbGljYXRpb25zOmNvbnZlcnRfdG9fY2FuZGlkYXRlIGhhcnZlc3Q6YXBwbGljYXRpb25zOmNyZWF0ZSBoYXJ2ZXN0OmFwcGxpY2F0aW9uczpkZXN0cm95IGhhcnZlc3Q6YXBwbGljYXRpb25zOmhpcmUgaGFydmVzdDphcHBsaWNhdGlvbnM6bGlzdCBoYXJ2ZXN0OmFwcGxpY2F0aW9uczptb3ZlIGhhcnZlc3Q6YXBwbGljYXRpb25zOnJlamVjdCBoYXJ2ZXN0OmFwcGxpY2F0aW9uX3N0YWdlczpsaXN0IGhhcnZlc3Q6YXBwbGljYXRpb25zOnVucmVqZWN0IGhhcnZlc3Q6YXBwbGljYXRpb25zOnVwZGF0ZSBoYXJ2ZXN0OmFwcGxpZWRfY2FuZGlkYXRlX3RhZ3M6Y3JlYXRlIGhhcnZlc3Q6YXBwbGllZF9jYW5kaWRhdGVfdGFnczpkZXN0cm95IGhhcnZlc3Q6YXBwbGllZF9jYW5kaWRhdGVfdGFnczpsaXN0IGhhcnZlc3Q6YXBwcm92YWxfZmxvd3M6Y3JlYXRlIGhhcnZlc3Q6YXBwcm92YWxfZmxvd3M6bGlzdCBoYXJ2ZXN0OmFwcHJvdmFsX2Zsb3dzOnJlcGxhY2VfYXBwcm92ZXJfZ3JvdXBzIGhhcnZlc3Q6YXBwcm92YWxfZmxvd3M6cmVxdWVzdF9hcHByb3ZhbHMgaGFydmVzdDphcHByb3ZhbF9mbG93czp1cGRhdGUgaGFydmVzdDphcHByb3Zlcl9ncm91cHM6bGlzdCBoYXJ2ZXN0OmFwcHJvdmVyX2dyb3VwczpyZXBsYWNlX2FwcHJvdmVyIGhhcnZlc3Q6YXBwcm92ZXJzOmxpc3QgaGFydmVzdDphdHRhY2htZW50czpjcmVhdGUgaGFydmVzdDphdHRhY2htZW50czpkZXN0cm95IGhhcnZlc3Q6YXR0YWNobWVudHM6bGlzdCBoYXJ2ZXN0OmJsb2NrZWRfc3BhbV9zb3VyY2VzOmNyZWF0ZSBoYXJ2ZXN0OmJsb2NrZWRfc3BhbV9zb3VyY2VzOmRlc3Ryb3kgaGFydmVzdDpibG9ja2VkX3NwYW1fc291cmNlczpsaXN0IGhhcnZlc3Q6YmxvY2tlZF9zcGFtX3NvdXJjZXM6dXBkYXRlIGhhcnZlc3Q6YnVsa19yZXF1ZXN0czpsaXN0IGhhcnZlc3Q6Y2FuZGlkYXRlX2F0dHJpYnV0ZV90eXBlczpsaXN0IGhhcnZlc3Q6Y2FuZGlkYXRlX2VkdWNhdGlvbnM6Y3JlYXRlIGhhcnZlc3Q6Y2FuZGlkYXRlX2VkdWNhdGlvbnM6ZGVzdHJveSBoYXJ2ZXN0OmNhbmRpZGF0ZV9lZHVjYXRpb25zOmxpc3QgaGFydmVzdDpjYW5kaWRhdGVfZW1wbG95bWVudHM6Y3JlYXRlIGhhcnZlc3Q6Y2FuZGlkYXRlX2VtcGxveW1lbnRzOmRlc3Ryb3kgaGFydmVzdDpjYW5kaWRhdGVfZW1wbG95bWVudHM6bGlzdCBoYXJ2ZXN0OmNhbmRpZGF0ZXM6YW5vbnltaXplIGhhcnZlc3Q6Y2FuZGlkYXRlczpjcmVhdGUgaGFydmVzdDpjYW5kaWRhdGVzOmRlc3Ryb3kgaGFydmVzdDpjYW5kaWRhdGVzOmxpc3QgaGFydmVzdDpjYW5kaWRhdGVzOm1lcmdlIGhhcnZlc3Q6Y2FuZGlkYXRlczp1cGRhdGUgaGFydmVzdDpjYW5kaWRhdGVfdGFnczpjcmVhdGUgaGFydmVzdDpjYW5kaWRhdGVfdGFnczpkZXN0cm95IGhhcnZlc3Q6Y2FuZGlkYXRlX3RhZ3M6bGlzdCBoYXJ2ZXN0OmNsb3NlX3JlYXNvbnM6bGlzdCBoYXJ2ZXN0OmN1c3RvbV9maWVsZF9kZXBhcnRtZW50czpjcmVhdGUgaGFydmVzdDpjdXN0b21fZmllbGRfZGVwYXJ0bWVudHM6ZGVzdHJveSBoYXJ2ZXN0OmN1c3RvbV9maWVsZF9kZXBhcnRtZW50czpsaXN0IGhhcnZlc3Q6Y3VzdG9tX2ZpZWxkX29mZmljZXM6Y3JlYXRlIGhhcnZlc3Q6Y3VzdG9tX2ZpZWxkX29mZmljZXM6ZGVzdHJveSBoYXJ2ZXN0OmN1c3RvbV9maWVsZF9vZmZpY2VzOmxpc3QgaGFydmVzdDpjdXN0b21fZmllbGRfb3B0aW9uczpjcmVhdGUgaGFydmVzdDpjdXN0b21fZmllbGRfb3B0aW9uczpkZXN0cm95IGhhcnZlc3Q6Y3VzdG9tX2ZpZWxkX29wdGlvbnM6bGlzdCBoYXJ2ZXN0OmN1c3RvbV9maWVsZF9vcHRpb25zOnVwZGF0ZSBoYXJ2ZXN0OmN1c3RvbV9maWVsZHM6Y3JlYXRlIGhhcnZlc3Q6Y3VzdG9tX2ZpZWxkczpkZXN0cm95IGhhcnZlc3Q6Y3VzdG9tX2ZpZWxkczpsaXN0IGhhcnZlc3Q6Y3VzdG9tX2ZpZWxkczp1cGRhdGUgaGFydmVzdDpkZWZhdWx0X2ludGVydmlld2VyczpsaXN0IGhhcnZlc3Q6ZGVtb2dyYXBoaWNfYW5zd2VyX29wdGlvbnM6bGlzdCBoYXJ2ZXN0OmRlbW9ncmFwaGljX2Fuc3dlcnM6bGlzdCBoYXJ2ZXN0OmRlbW9ncmFwaGljX3F1ZXN0aW9uX3NldHM6bGlzdCBoYXJ2ZXN0OmRlbW9ncmFwaGljX3F1ZXN0aW9uczpsaXN0IGhhcnZlc3Q6ZGVwYXJ0bWVudHM6Y3JlYXRlIGhhcnZlc3Q6ZGVwYXJ0bWVudHM6bGlzdCBoYXJ2ZXN0OmRlcGFydG1lbnRzOnVwZGF0ZSBoYXJ2ZXN0OmVlb2M6bGlzdCBoYXJ2ZXN0OmVtYWlsX3RlbXBsYXRlczpsaXN0IGhhcnZlc3Q6Zm9jdXNfY2FuZGlkYXRlX2F0dHJpYnV0ZXM6bGlzdCBoYXJ2ZXN0OmZ1dHVyZV9qb2JfcGVybWlzc2lvbnM6Y3JlYXRlIGhhcnZlc3Q6ZnV0dXJlX2pvYl9wZXJtaXNzaW9uczpkZXN0cm95IGhhcnZlc3Q6ZnV0dXJlX2pvYl9wZXJtaXNzaW9uczpsaXN0IGhhcnZlc3Q6aW50ZXJ2aWV3ZXJzOmxpc3QgaGFydmVzdDppbnRlcnZpZXdlcl90YWdzOmxpc3QgaGFydmVzdDppbnRlcnZpZXdfa2l0czpsaXN0IGhhcnZlc3Q6aW50ZXJ2aWV3czpjcmVhdGUgaGFydmVzdDppbnRlcnZpZXdzOmRlc3Ryb3kgaGFydmVzdDppbnRlcnZpZXdzOmxpc3QgaGFydmVzdDppbnRlcnZpZXdzOnVwZGF0ZSBoYXJ2ZXN0OmpvYl9ib2FyZF9jdXN0b21fbG9jYXRpb25zOmxpc3QgaGFydmVzdDpqb2JfYm9hcmRzOmxpc3QgaGFydmVzdDpqb2JfY2FuZGlkYXRlX2F0dHJpYnV0ZXM6bGlzdCBoYXJ2ZXN0OmpvYl9oaXJpbmdfbWFuYWdlcnM6Y3JlYXRlIGhhcnZlc3Q6am9iX2hpcmluZ19tYW5hZ2VyczpkZXN0cm95IGhhcnZlc3Q6am9iX2hpcmluZ19tYW5hZ2VyczpsaXN0IGhhcnZlc3Q6am9iX2ludGVydmlld3M6bGlzdCBoYXJ2ZXN0OmpvYl9pbnRlcnZpZXdfc3RhZ2VzOmxpc3QgaGFydmVzdDpqb2Jfbm90ZXM6Y3JlYXRlIGhhcnZlc3Q6am9iX25vdGVzOmRlc3Ryb3kgaGFydmVzdDpqb2Jfbm90ZXM6bGlzdCBoYXJ2ZXN0OmpvYl9ub3Rlczp1cGRhdGUgaGFydmVzdDpqb2Jfb3duZXJzOmNyZWF0ZSBoYXJ2ZXN0OmpvYl9vd25lcnM6ZGVzdHJveSBoYXJ2ZXN0OmpvYl9vd25lcnM6bGlzdCBoYXJ2ZXN0OmpvYl9wb3N0X2xvY2F0aW9uczpjcmVhdGUgaGFydmVzdDpqb2JfcG9zdF9sb2NhdGlvbnM6ZGVzdHJveSBoYXJ2ZXN0OmpvYl9wb3N0X2xvY2F0aW9uczpsaXN0IGhhcnZlc3Q6am9iX3Bvc3RzOmNyZWF0ZSBoYXJ2ZXN0OmpvYl9wb3N0czpsaXN0IGhhcnZlc3Q6am9iX3Bvc3RzOnVwZGF0ZSBoYXJ2ZXN0OmpvYnM6Y3JlYXRlIGhhcnZlc3Q6am9iczpsaXN0IGhhcnZlc3Q6am9iczp1cGRhdGUgaGFydmVzdDpub3RlczpjcmVhdGUgaGFydmVzdDpub3RlczpsaXN0IGhhcnZlc3Q6b2ZmZXJzOmNyZWF0ZSBoYXJ2ZXN0Om9mZmVyczpsaXN0IGhhcnZlc3Q6b2ZmZXJzOnVwZGF0ZSBoYXJ2ZXN0Om9mZmljZXM6Y3JlYXRlIGhhcnZlc3Q6b2ZmaWNlczpsaXN0IGhhcnZlc3Q6b2ZmaWNlczp1cGRhdGUgaGFydmVzdDpvcGVuaW5nczpjcmVhdGUgaGFydmVzdDpvcGVuaW5nczpkZXN0cm95IGhhcnZlc3Q6b3BlbmluZ3M6bGlzdCBoYXJ2ZXN0Om9wZW5pbmdzOnVwZGF0ZSBoYXJ2ZXN0OnBheV9pbnB1dF9yYW5nZXM6bGlzdCBoYXJ2ZXN0OnBheV9pbnB1dHM6bGlzdCBoYXJ2ZXN0OnByb3NwZWN0X2RldGFpbHM6bGlzdCBoYXJ2ZXN0OnByb3NwZWN0X3Bvb2xzOmxpc3QgaGFydmVzdDpwcm9zcGVjdF9wb29sX3N0YWdlczpsaXN0IGhhcnZlc3Q6cmVmZXJyZXJzOmxpc3QgaGFydmVzdDpyZWplY3Rpb25fZGV0YWlsczpsaXN0IGhhcnZlc3Q6cmVqZWN0aW9uX2RldGFpbHM6dXBkYXRlIGhhcnZlc3Q6cmVqZWN0aW9uX3JlYXNvbnM6bGlzdCBoYXJ2ZXN0OnJlamVjdGlvbl9yZWFzb25zOnNob3cgaGFydmVzdDpzY29yZWNhcmRfY2FuZGlkYXRlX2F0dHJpYnV0ZXM6bGlzdCBoYXJ2ZXN0OnNjb3JlY2FyZF9xdWVzdGlvbl9hbnN3ZXJfb3B0aW9uczpsaXN0IGhhcnZlc3Q6c2NvcmVjYXJkX3F1ZXN0aW9uX2Fuc3dlcnM6bGlzdCBoYXJ2ZXN0OnNjb3JlY2FyZF9xdWVzdGlvbl9jYW5kaWRhdGVfYXR0cmlidXRlczpsaXN0IGhhcnZlc3Q6c2NvcmVjYXJkX3F1ZXN0aW9uX29wdGlvbnM6bGlzdCBoYXJ2ZXN0OnNjb3JlY2FyZF9xdWVzdGlvbnM6bGlzdCBoYXJ2ZXN0OnNjb3JlY2FyZHM6bGlzdCBoYXJ2ZXN0OnNvdXJjZXM6bGlzdCBoYXJ2ZXN0OnRyYWNraW5nX2xpbmtzOmxpc3QgaGFydmVzdDp1c2VyX2VtYWlsczpjcmVhdGUgaGFydmVzdDp1c2VyX2VtYWlsczpsaXN0IGhhcnZlc3Q6dXNlcl9qb2JfcGVybWlzc2lvbnM6Y3JlYXRlIGhhcnZlc3Q6dXNlcl9qb2JfcGVybWlzc2lvbnM6ZGVzdHJveSBoYXJ2ZXN0OnVzZXJfam9iX3Blcm1pc3Npb25zOmxpc3QgaGFydmVzdDp1c2VyX3JvbGVzOmxpc3QgaGFydmVzdDp1c2VyczphY3RpdmF0ZSBoYXJ2ZXN0OnVzZXJzOmNyZWF0ZSBoYXJ2ZXN0OnVzZXJzOmRlYWN0aXZhdGUgaGFydmVzdDp1c2VyczpsaXN0IGhhcnZlc3Q6dXNlcnM6cmV2b2tlX3Blcm1pc3Npb25zIGhhcnZlc3Q6dXNlcnM6dXBkYXRlIiwidmVyc2lvbiI6MS4wLCJzaWxvIjoyLCJhbGxvd2VkX2lwcyI6W10sImFjdCI6eyJvcmdhbml6YXRpb24uaWQiOjQwMDE2MTQwMDIsIm9yZ2FuaXphdGlvbi5uYW1lIjoiR3JheXNjYWxlIEludGVncmF0aW9uIFNhbmRib3giLCJjcmVkZW50aWFsLnR5cGUiOiJBdXRoOjpQcm92aWRlcjo6TW9kZWxzOjpBY2Nlc3NUb2tlbk1ldGEiLCJjcmVkZW50aWFsLmlkIjo1NzY4NDk2MDAyLCJjcmVkZW50aWFsLmRlc2NyaXB0aW9uIjpudWxsLCJwYXJ0bmVyLmlkIjpudWxsLCJwYXJ0bmVyLm5hbWUiOm51bGwsImNsaWVudC5pZCI6IlJSUUxUV3AyN2d6RFBFR1EzVmU5VE00ZjZadHlvUEJtRnNhMC0yIiwiY2xpZW50Lm5hbWUiOiJHdWlkZSBJbnRlZ3JhdGlvbiBWMyIsImNsaWVudC50eXBlIjoiQXV0aDo6Q2xpZW50QXBwbGljYXRpb25zOjpNb2RlbHM6OkhhcnZlc3RPcmdhbml6YXRpb25DbGllbnRBcHBsaWNhdGlvbiJ9fQ.wLLnhPy9kJKDphm37eAtQ3uamVZvaPouHIq4Mo2asd9MjnAHOpgPplospvHP5BzUJUANR0tWk8Fp7JlVl7UCyC05NTJhxluAA6DHwYpqWah3hjGFkCwZFPw8Z7jYvZkcHyCcAV0mHUKzuqmoCVWEHhOzKA_Z6ec0pS7YviVHKpzwfWb-5a2CxKADPIzVZWHbqzI-s9CcQevdOm0hRu3V1HkKPeQ_o8QO-zmHamjNrfE8Sx4o7NU9-S4X2yqu35V03cagBSftcx68m13IVY_hAKHhCoZWbnfyJB6xuNZ3ZBfjkhQWuT7fRt1rEzH9XUkD1qopamQOyqZ_iNWWVzRsQA
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json;charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Date:
+      - Thu, 07 May 2026 17:18:52 GMT
+      Content-Security-Policy:
+      - 'default-src ''self''; connect-src ''self'' d3b3ehuo35wzeh.cloudfront.net
+        api.mapbox.com docs.google.com/feeds/download/documents/export/Export *.browser-intake-datadoghq.com
+        browser-intake-datadoghq.com api.recurly.com boards-api.greenhouse.io grnhse-prod-jben-us-east-1.s3.us-east-1.amazonaws.com
+        grnhse-prod-jben-us-east-1.s3-us-east-1.amazonaws.com grnhse-prod-jben-us-east-1.s3.amazonaws.com
+        s2-recruiting.cdn.greenhouse.io grnhse-use1-prod-s2-ghr.s3.us-east-1.amazonaws.com
+        grnhse-use1-prod-s2-ghr.s3-us-east-1.amazonaws.com grnhse-use1-prod-s2-ghr.s3.amazonaws.com
+        grnhse-use1-prod-ghr-migrations.s3.us-east-1.amazonaws.com grnhse-use1-prod-ghr-migrations.s3-us-east-1.amazonaws.com
+        grnhse-use1-prod-ghr-migrations.s3.amazonaws.com grnhse-dochouse-prod.s3.us-east-1.amazonaws.com
+        grnhse-dochouse-prod.s3-us-east-1.amazonaws.com grnhse-dochouse-prod.s3.amazonaws.com
+        email-address-validator.us.greenhouse.io www.google-analytics.com ssl.google-analytics.com
+        support.greenhouse.io *.googleapis.com *.googleusercontent.com *.walkme.com
+        wss://*.greenhouse.io static.zdassets.com ekr.zdassets.com ekr.zendesk.com
+        greenhouse.zendesk.com wss://greenhouse.zendesk.com *.zopim.com wss://*.zopim.com
+        zendesk-eu.my.sentry.io api.rollbar.com api.smartling.com api.geocode.earth
+        https://api-geocode-earth-proxy.greenhouse.io/ https://interseller.greenhouse.io
+        c.spl.greenhouse.io eppo.cloud wss://*.zoom.us https://*.zoom.us *.amplitude.com
+        prod-jben.prod-use1-0.gh.internal; font-src ''self'' data: cdnjs.cloudflare.com
+        css.zohostatic.com d33zkqzv7i9ae0.cloudfront.net d3b3ehuo35wzeh.cloudfront.net
+        fonts.gstatic.com sxt.cdn.skype.com safari-extension://* s2-recruiting.cdn.greenhouse.io
+        grnhse-use1-prod-s2-ghr.s3.us-east-1.amazonaws.com grnhse-use1-prod-s2-ghr.s3-us-east-1.amazonaws.com
+        grnhse-use1-prod-s2-ghr.s3.amazonaws.com grnhse-use1-prod-ghr-migrations.s3.us-east-1.amazonaws.com
+        grnhse-use1-prod-ghr-migrations.s3-us-east-1.amazonaws.com grnhse-use1-prod-ghr-migrations.s3.amazonaws.com
+        *.walkme.com *.zopim.com recruiting.cdn.greenhouse.io; frame-src ''self''
+        d3b3ehuo35wzeh.cloudfront.net accounts.google.com analytics.recruitics.com
+        api.recurly.com apis.google.com app.intralca.com/LCAWidget/ compose.mixmax.com
+        conv.indeed.com docs.google.com/picker z1fpkbyft3qn.statuspage.io greenhouse.zendesk.com
+        greenhouse.zendesk.com/embeddable/config platform.linkedin.com player.vimeo.com
+        postingcentreintegration.adcourier.com/posting_centre/view production.360social.me
+        support.greenhouse.io www.adcourier.com www.google.com www.linkedin.com www.youtube.com
+        www.google.com/recaptcha/ www.gstatic.com/recaptcha/ s2-recruiting.cdn.greenhouse.io
+        grnhse-use1-prod-s2-ghr.s3.us-east-1.amazonaws.com grnhse-use1-prod-s2-ghr.s3-us-east-1.amazonaws.com
+        grnhse-use1-prod-s2-ghr.s3.amazonaws.com grnhse-use1-prod-ghr-migrations.s3.us-east-1.amazonaws.com
+        grnhse-use1-prod-ghr-migrations.s3-us-east-1.amazonaws.com grnhse-use1-prod-ghr-migrations.s3.amazonaws.com
+        https://prod-job-boards.prod-use1-0.greenhouse.io job-boards.greenhouse.io
+        job-boards.cdn.greenhouse.io *.googleapis.com *.walkme.com app.forethought.ai
+        solve-widget.forethought.ai form.typeform.com fast.wistia.net www.adobe.com
+        acrs.adobe.com static.echocdn.com *.echosignsandbox.com *.echosign.com *.adobesign.com
+        *.adobesigncdn.com *.zoom.us messaging.us.greenhouse.io greenhouse-inapp.partnerfleet.app
+        blob: https://analytics.greenhouse.io https://pdf-viewer.cdn.greenhouse.io;
+        img-src * data: blob:; media-src * data: blob:; script-src ''self'' ''unsafe-eval''
+        d3b3ehuo35wzeh.cloudfront.net d3sbxpiag177w8.cloudfront.net accounts.google.com
+        analytics.recruitics.com api.recurly.com apis.google.com app.intralca.com/LCAWidget/
+        conv.indeed.com d27j601g4x0gd5.cloudfront.net d37gvrvc0wt4s1.cloudfront.net
+        www.datadoghq-browser-agent.com firefly-071591.s3.amazonaws.com/scripts/ js.recurly.com
+        maps.gstatic.com m.addthisedge.com npmcdn.com/redux-thunk@2.0.1/dist/redux-thunk.min.js
+        pixel.appcast.io platform.linkedin.com s3.amazonaws.com/s3.maketutorial.com
+        s2-recruiting.cdn.greenhouse.io grnhse-use1-prod-s2-ghr.s3.us-east-1.amazonaws.com
+        grnhse-use1-prod-s2-ghr.s3-us-east-1.amazonaws.com grnhse-use1-prod-s2-ghr.s3.amazonaws.com
+        grnhse-use1-prod-ghr-migrations.s3.us-east-1.amazonaws.com grnhse-use1-prod-ghr-migrations.s3-us-east-1.amazonaws.com
+        grnhse-use1-prod-ghr-migrations.s3.amazonaws.com boards.cdn.greenhouse.io
+        boards-cdn.greenhouse.io grnhse-prod-jben-us-east-1.s3.us-east-1.amazonaws.com
+        grnhse-prod-jben-us-east-1.s3-us-east-1.amazonaws.com grnhse-prod-jben-us-east-1.s3.amazonaws.com
+        https://prod-job-boards.prod-use1-0.greenhouse.io job-boards.greenhouse.io
+        job-boards.cdn.greenhouse.io tagmanager.google.com www.googletagmanager.com
+        ssl.google-analytics.com unpkg.com/redux@3.6.0/dist/redux.min.js www.dropbox.com/static/api/2/dropins.js
+        www.google.com/js/ www.google.com/recaptcha/ www.gstatic.com/recaptcha/ www.linkedin.com
+        z1fpkbyft3qn.statuspage.io static.zdassets.com ekr.zdassets.com ekr.zendesk.com
+        greenhouse.zendesk.com wss://greenhouse.zendesk.com *.zopim.com wss://*.zopim.com
+        zendesk-eu.my.sentry.io safari-extension://* *.googleapis.com *.walkme.com
+        app.forethought.ai solve-widget.forethought.ai www.google-analytics.com www.googletagmanager.com/gtm.js
+        d2c7xlmseob604.cloudfront.net api.smartling.com *.amplitude.com *.zoom.us
+        greenhouse-inapp.partnerfleet.app ''nonce-F4Bo6o5kwbKSnu5P45sSacvwoGRvS/zhw07zVDehI5E='';
+        style-src ''self'' ''unsafe-inline'' sdk.mixmax.com d3b3ehuo35wzeh.cloudfront.net
+        grnhse-use1-prod-s2-ghr.s3.us-east-1.amazonaws.com grnhse-use1-prod-s2-ghr.s3-us-east-1.amazonaws.com
+        grnhse-use1-prod-s2-ghr.s3.amazonaws.com grnhse-use1-prod-ghr-migrations.s3.us-east-1.amazonaws.com
+        grnhse-use1-prod-ghr-migrations.s3-us-east-1.amazonaws.com grnhse-use1-prod-ghr-migrations.s3.amazonaws.com
+        boards.cdn.greenhouse.io boards-cdn.greenhouse.io s2-recruiting.cdn.greenhouse.io
+        tagmanager.google.com/ *.googleapis.com *.walkme.com *.amplitude.com; worker-src
+        blob:; report-uri https://csp-report.browser-intake-datadoghq.com/api/v2/logs?dd-api-key=pubc838ef47eadc5ad8b1201d22652660a9&dd-evp-origin=content-security-policy&ddsource=csp-report&ddtags=silo%3A2%2Cenvironment%3Aproduction'
+      Link:
+      - <https://harvest.greenhouse.io/v3/jobs?cursor=eyJxdWVyeSI6eyJwZXJfcGFnZSI6MX0sInBlcl9wYWdlIjoxLCJpZCI6NjM5MzIxODAwMiwicGFnZSI6Miwib3JpZ2luYWxfcmVxdWVzdF9pZCI6IjI4NzVhOTIwYzY3NzIzOTdiMGRiYmQwZDc4NWNlYzM1In0%3D>;
+        rel="next"
+      Vary:
+      - Accept,Accept-Encoding
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Ratelimit-Limit:
+      - '150'
+      X-Ratelimit-Remaining:
+      - '115'
+      X-Ratelimit-Reset:
+      - '1778174362'
+      Etag:
+      - W/"e3fc7eee4e4ecb72ed5f5ec1c96d2e09"
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      X-Request-Id:
+      - 2875a920c6772397b0dbbd0d785cec35
+      X-Runtime:
+      - '0.523413'
+      X-Frame-Options:
+      - sameorigin
+      X-Content-Type-Options:
+      - nosniff
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Download-Options:
+      - noopen
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+      X-Cache:
+      - Miss from cloudfront
+      Via:
+      - 1.1 94c162a3cf560de9030f33fa36e19624.cloudfront.net (CloudFront)
+      X-Amz-Cf-Pop:
+      - IAD61-P6
+      X-Amz-Cf-Id:
+      - liV0SX9tluc6ibydAnjH5XzRRLAuAphCuRAynJ_YmTBrO-EuDJES6Q==
+    body:
+      encoding: ASCII-8BIT
+      string: '[{"id":6409476002,"name":"Window Washer - Seasonal","requisition_id":"76","notes":null,"confidential":false,"created_at":"2026-05-05T22:36:04.296Z","updated_at":"2026-05-05T22:36:05.370Z","is_template":false,"copied_from_id":6386786002,"opened_at":"2026-05-05T22:36:05.366Z","closed_at":null,"status":"open","office_ids":[4033591002],"department_id":4078923002,"custom_fields":{"employment_type":{"name":"Employment
+        Type","type":"single_select","value":"Part-time"}}}]
+
+        '
+    http_version:
+  recorded_at: Thu, 07 May 2026 17:18:52 GMT
+recorded_with: VCR 3.0.3

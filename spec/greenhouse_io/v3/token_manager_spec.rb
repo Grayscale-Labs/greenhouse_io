@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 RSpec.describe GreenhouseIo::V3::TokenManager do
@@ -26,7 +28,8 @@ RSpec.describe GreenhouseIo::V3::TokenManager do
 
     context "when token_store is empty" do
       before do
-        stub_request(:post, "https://auth.greenhouse.io/token?grant_type=client_credentials&sub=12345")
+        stub_request(:post, "https://auth.greenhouse.io/token")
+          .with(body: { "grant_type" => "client_credentials", "sub" => "12345" })
           .to_return(
             status: 200,
             body: { access_token: "new_token", refresh_token: "new_refresh", expires_at: (Time.now + 3600).iso8601 }.to_json,
@@ -47,7 +50,8 @@ RSpec.describe GreenhouseIo::V3::TokenManager do
         token_store[:expires_at] = (Time.now - 60).iso8601
         token_store[:refresh_token] = "stored_refresh_token"
 
-        stub_request(:post, "https://auth.greenhouse.io/token?grant_type=refresh_token&refresh_token=stored_refresh_token")
+        stub_request(:post, "https://auth.greenhouse.io/token")
+          .with(body: { "grant_type" => "refresh_token", "refresh_token" => "stored_refresh_token" })
           .to_return(
             status: 200,
             body: { access_token: "refreshed_token", refresh_token: "new_refresh_2", expires_at: (Time.now + 3600).iso8601 }.to_json,
@@ -67,10 +71,12 @@ RSpec.describe GreenhouseIo::V3::TokenManager do
         token_store[:expires_at] = (Time.now - 60).iso8601
         token_store[:refresh_token] = "bad_refresh_token"
 
-        stub_request(:post, "https://auth.greenhouse.io/token?grant_type=refresh_token&refresh_token=bad_refresh_token")
+        stub_request(:post, "https://auth.greenhouse.io/token")
+          .with(body: { "grant_type" => "refresh_token", "refresh_token" => "bad_refresh_token" })
           .to_return(status: 400, body: '{"error":"invalid"}')
 
-        stub_request(:post, "https://auth.greenhouse.io/token?grant_type=client_credentials&sub=12345")
+        stub_request(:post, "https://auth.greenhouse.io/token")
+          .with(body: { "grant_type" => "client_credentials", "sub" => "12345" })
           .to_return(
             status: 200,
             body: { access_token: "fallback_token", refresh_token: "fallback_refresh", expires_at: (Time.now + 3600).iso8601 }.to_json,
@@ -90,7 +96,8 @@ RSpec.describe GreenhouseIo::V3::TokenManager do
       token_store[:expires_at] = (Time.now + 3600).iso8601
       token_store[:refresh_token] = "stored_refresh_token"
 
-      stub_request(:post, "https://auth.greenhouse.io/token?grant_type=refresh_token&refresh_token=stored_refresh_token")
+      stub_request(:post, "https://auth.greenhouse.io/token")
+        .with(body: { "grant_type" => "refresh_token", "refresh_token" => "stored_refresh_token" })
         .to_return(
           status: 200,
           body: { access_token: "force_refreshed", refresh_token: "new_refresh_3", expires_at: (Time.now + 3600).iso8601 }.to_json,

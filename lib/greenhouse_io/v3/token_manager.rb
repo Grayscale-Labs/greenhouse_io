@@ -60,11 +60,9 @@ module GreenhouseIo
       end
 
       def post_token_request(params)
-        uri = URI("#{AUTH_BASE_URI}/token")
-        uri.query = URI.encode_www_form(params)
-
         response = HTTParty.post(
-          uri.to_s,
+          "#{AUTH_BASE_URI}/token",
+          body: params,
           headers: { "Authorization" => "Basic #{encoded_credentials}" }
         )
 
