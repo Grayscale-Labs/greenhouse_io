@@ -111,4 +111,51 @@ RSpec.describe GreenhouseIo::V3::Client do
       expect(result).to eq({ "id" => 1 })
     end
   end
+
+  describe "pagination" do
+    let(:page1_body) { [{ "id" => 1, "name" => "Engineer" }, { "id" => 2, "name" => "Designer" }] }
+    let(:page2_body) { [{ "id" => 3, "name" => "PM" }] }
+    let(:next_url) { "https://harvest.greenhouse.io/v3/jobs?cursor=abc123" }
+
+    before do
+      WebMock.reset!
+
+      stub_request(:get, "https://harvest.greenhouse.io/v3/jobs?per_page=2")
+        .with(headers: { "Authorization" => "Bearer test_bearer_token" })
+        .to_return(
+          status: 200,
+          body: JSON.dump(page1_body),
+          headers: default_response_headers.merge("link" => "<#{next_url}>; rel=\"next\"")
+        )
+
+      stub_request(:get, next_url)
+        .with(headers: { "Authorization" => "Bearer test_bearer_token" })
+        .to_return(
+          status: 200,
+          body: JSON.dump(page2_body),
+          headers: default_response_headers
+        )
+    end
+
+    it "follows next link header across pages" do
+      collection = client.jobs(per_page: 2)
+      pages = collection.each_page.to_a
+      expect(pages.length).to eq(2)
+      expect(pages.first).to be_a(GreenhouseIo::ResourceCollection::Page)
+    end
+
+    it "iterates all resources lazily" do
+      collection = client.jobs(per_page: 2)
+      first_job = collection.first
+      expect(first_job).to respond_to(:id)
+      expect(first_job).to respond_to(:name)
+      expect(first_job.id).to eq(1)
+    end
+
+    it "iterates all resources across pages" do
+      collection = client.jobs(per_page: 2)
+      all_ids = collection.map(&:id)
+      expect(all_ids).to eq([1, 2, 3])
+    end
+  end
 end
