@@ -23,6 +23,10 @@ VCR.configure do |config|
   config.filter_sensitive_data('<V3_ACCESS_TOKEN>') do |interaction|
     interaction.response.body[/"access_token":"([^"]+)"/, 1]
   end
+  config.filter_sensitive_data('Bearer <V3_BEARER_TOKEN>') do |interaction|
+    auth = interaction.request.headers['Authorization']&.first
+    auth if auth&.start_with?('Bearer ')
+  end
   config.default_cassette_options = { record: ENV.fetch('VCR_RECORD_MODE', 'once').to_sym }
   config.configure_rspec_metadata!
 end

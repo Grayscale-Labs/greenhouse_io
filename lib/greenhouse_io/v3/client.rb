@@ -78,9 +78,11 @@ module GreenhouseIo
         elsif response.code == 401 && !@token_refreshed_this_request
           @token_refreshed_this_request = true
           @token_manager.force_refresh!
-          result = get_from_harvest_api(url, options)
-          @token_refreshed_this_request = false
-          result
+          begin
+            get_from_harvest_api(url, options)
+          ensure
+            @token_refreshed_this_request = false
+          end
         else
           raise GreenhouseIo::Error.new(response.code)
         end
@@ -99,9 +101,11 @@ module GreenhouseIo
         elsif response.code == 401 && !@token_refreshed_this_request
           @token_refreshed_this_request = true
           @token_manager.force_refresh!
-          result = post_to_harvest_api(url, body, headers)
-          @token_refreshed_this_request = false
-          result
+          begin
+            post_to_harvest_api(url, body, headers)
+          ensure
+            @token_refreshed_this_request = false
+          end
         else
           raise GreenhouseIo::Error.new(response.code)
         end
