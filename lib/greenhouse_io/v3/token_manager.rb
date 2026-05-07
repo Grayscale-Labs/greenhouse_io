@@ -1,6 +1,7 @@
 require 'httparty'
 require 'json'
 require 'base64'
+require 'time'
 
 module GreenhouseIo
   module V3
