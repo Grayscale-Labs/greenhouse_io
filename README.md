@@ -189,6 +189,62 @@ Methods for which an `id` is **required**:
 * `job_post` *(requires a job ID)*
 * `create_candidate_note` *(requires a candidate ID)*
 
+### GreenhouseIo::V3::Client
+
+The V3 client uses OAuth2 Bearer tokens instead of basic auth.
+
+```ruby
+client = GreenhouseIo::V3::Client.new(
+  client_id: "your_client_id",
+  client_secret: "your_client_secret",
+  sub: "greenhouse_user_id"
+)
+
+client.jobs(per_page: 100)
+client.candidates
+client.applications
+```
+
+The client automatically refreshes the token on 401 responses and retries the request.
+
+#### Token Store
+
+By default, tokens are stored in an in-memory hash (lost on restart). For production use, pass a `token_store` that implements `[]` and `[]=`:
+
+```ruby
+# Simple Redis-backed store
+class RedisTokenStore
+  def initialize(key_prefix)
+    @prefix = key_prefix
+  end
+
+  def [](key)
+    Redis.current.get("#{@prefix}:#{key}")
+  end
+
+  def []=(key, value)
+    Redis.current.set("#{@prefix}:#{key}", value, ex: 7200)
+  end
+end
+
+client = GreenhouseIo::V3::Client.new(
+  client_id: "...",
+  client_secret: "...",
+  sub: "12345",
+  token_store: RedisTokenStore.new("gh_v3:connector_42")
+)
+```
+
+The token store must handle three keys: `:access_token`, `:refresh_token`, and `:expires_at`.
+
+#### Thread Safety
+
+`V3::Client` instances are **not thread-safe**. Each thread/worker should create its own client instance. If you need shared token persistence across workers (e.g., Sidekiq), use a DB or Redis-backed `token_store` — the locking belongs in your store implementation, not in the gem.
+
+#### Token Response Validation
+
+The gem trusts that Greenhouse returns well-formed token responses. If the auth endpoint returns a malformed response (missing `access_token` or `expires_at`), the gem will store `nil` values. This causes `token_valid?` to always return false, resulting in repeated fetch/refresh attempts on every API call. The requests will still go out (with an empty Bearer token), so you'll see 401s in a loop until retries are exhausted. Wrap client usage in error handling if you're concerned about auth endpoint availability.
+
 ## Contributing
 
 1. Fork it
