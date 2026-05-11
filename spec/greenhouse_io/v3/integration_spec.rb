@@ -3,11 +3,13 @@
 require 'spec_helper'
 
 RSpec.describe "V3 Integration", :vcr do
+  let(:token_store) { {} }
   let(:client) do
     GreenhouseIo::V3::Client.new(
       client_id: ENV.fetch("GREENHOUSE_V3_CLIENT_ID", "test"),
       client_secret: ENV.fetch("GREENHOUSE_V3_CLIENT_SECRET", "test"),
-      sub: ENV.fetch("GREENHOUSE_V3_SUB", "12345")
+      sub: ENV.fetch("GREENHOUSE_V3_SUB", "12345"),
+      token_store: token_store
     )
   end
 
@@ -32,7 +34,7 @@ RSpec.describe "V3 Integration", :vcr do
 
   describe "token refresh" do
     it "recovers from expired token", vcr: { cassette_name: "v3/integration_token_refresh" } do
-      client.instance_variable_get(:@token_manager).token_store[:access_token] = "invalid_expired_token"
+      token_store[:access_token] = "invalid_expired_token"
 
       jobs = client.jobs(per_page: 1)
       expect(jobs.first.id).to be_a(Integer)

@@ -243,7 +243,7 @@ The token store must handle three keys: `:access_token`, `:refresh_token`, and `
 
 #### Token Response Validation
 
-The gem trusts that Greenhouse returns well-formed token responses. If the auth endpoint returns a malformed response (missing `access_token` or `expires_at`), the gem will store `nil` values and raise a `TypeError` on the next token validity check. Wrap client instantiation in error handling if you're concerned about auth endpoint availability.
+The gem trusts that Greenhouse returns well-formed token responses. If the auth endpoint returns a malformed response (missing `access_token` or `expires_at`), the gem will store `nil` values. This causes `token_valid?` to always return false, resulting in repeated fetch/refresh attempts on every API call. The requests will still go out (with an empty Bearer token), so you'll see 401s in a loop until retries are exhausted. Wrap client usage in error handling if you're concerned about auth endpoint availability.
 
 ## Contributing
 
