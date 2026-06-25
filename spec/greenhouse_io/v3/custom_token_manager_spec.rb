@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe GreenhouseIo::V3::TokenManager do
+RSpec.describe GreenhouseIo::V3::CustomTokenManager do
   let(:token_store) { {} }
   let(:manager) do
     described_class.new(

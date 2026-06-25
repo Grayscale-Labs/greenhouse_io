@@ -12,7 +12,10 @@ require 'retriable'
 
 module GreenhouseIo
   module V3
-    class Client
+    # Shared HTTP/API behavior for V3 clients. Subclasses must set
+    # @token_manager in their #initialize (calling super to set up the
+    # shared request state).
+    class BaseClient
       include HTTMultiParty
       include GreenhouseIo::API
 
@@ -22,13 +25,7 @@ module GreenhouseIo
 
       base_uri 'https://harvest.greenhouse.io/v3'
 
-      def initialize(client_id:, client_secret:, sub:, token_store: {})
-        @token_manager = TokenManager.new(
-          client_id: client_id,
-          client_secret: client_secret,
-          sub: sub,
-          token_store: token_store
-        )
+      def initialize
         @token_refreshed_this_request = false
         self.using_with_retries = false
       end

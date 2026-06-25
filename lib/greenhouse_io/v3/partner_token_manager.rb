@@ -5,36 +5,32 @@ require 'time'
 
 module GreenhouseIo
   module V3
-    class TokenManager
+    # Handles the OAuth 2.0 Authorization Code Grant token lifecycle
+    # (post-authorization) for Partner integrations.
+    #
+    # Unlike CustomTokenManager, this cannot self-heal: there is no
+    # client_credentials fetch fallback. The refresh token rotates on every
+    # refresh, so the new one must be persisted. When refresh fails, the
+    # failure is terminal until the user re-authorizes through Greenhouse, so
+    # a ReauthorizationRequired error is raised.
+    class PartnerTokenManager
       AUTH_BASE_URI = "https://auth.greenhouse.io".freeze
 
-      attr_reader :client_id, :client_secret, :sub, :token_store
+      attr_reader :client_id, :client_secret, :token_store
 
-      def initialize(client_id:, client_secret:, sub:, token_store: {})
+      def initialize(client_id:, client_secret:, token_store:)
         @client_id = client_id
         @client_secret = client_secret
-        @sub = sub
         @token_store = token_store
       end
 
       def access_token
-        return token_store[:access_token] if token_valid?
-
-        if token_store[:refresh_token]
-          refresh!
-        else
-          fetch!
-        end
-
+        refresh! unless token_valid?
         token_store[:access_token]
       end
 
       def force_refresh!
-        if token_store[:refresh_token]
-          refresh!
-        else
-          fetch!
-        end
+        refresh!
       end
 
       private
@@ -45,19 +41,14 @@ module GreenhouseIo
           Time.parse(token_store[:expires_at]) > Time.now + 30
       end
 
-      def fetch!
-        response = post_token_request("grant_type" => "client_credentials", "sub" => sub)
-        store_token_response(response)
-      end
-
       def refresh!
         response = post_token_request(
           "grant_type" => "refresh_token",
           "refresh_token" => token_store[:refresh_token]
         )
         store_token_response(response)
-      rescue GreenhouseIo::Error
-        fetch!
+      rescue GreenhouseIo::Error => e
+        raise GreenhouseIo::ReauthorizationRequired.new(e.message, e.code)
       end
 
       def post_token_request(params)

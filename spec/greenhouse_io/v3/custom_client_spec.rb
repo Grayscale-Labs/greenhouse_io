@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe GreenhouseIo::V3::Client do
+RSpec.describe GreenhouseIo::V3::CustomClient do
   let(:token_store) do
     {
       access_token: "test_bearer_token",
