@@ -47,6 +47,19 @@ RSpec.describe GreenhouseIo::V3::PartnerTokenManager do
       end
     end
 
+    context "when no refresh token is present" do
+      before do
+        token_store[:access_token] = "expired_token"
+        token_store[:expires_at] = (Time.now - 60).iso8601
+        # no refresh_token
+      end
+
+      it "raises ReauthorizationRequired without making a request" do
+        expect(HTTParty).not_to receive(:post)
+        expect { manager.access_token }.to raise_error(GreenhouseIo::ReauthorizationRequired)
+      end
+    end
+
     context "when refresh fails" do
       before do
         token_store[:access_token] = "expired_token"

@@ -27,6 +27,9 @@ VCR.configure do |config|
     auth = interaction.request.headers['Authorization']&.first
     auth if auth&.start_with?('Bearer ')
   end
+  config.filter_sensitive_data('<V3_REFRESH_TOKEN>') do |interaction|
+    interaction.response.body[/"refresh_token":"([^"]+)"/, 1]
+  end
   config.default_cassette_options = { record: ENV.fetch('VCR_RECORD_MODE', 'once').to_sym }
   config.configure_rspec_metadata!
 end

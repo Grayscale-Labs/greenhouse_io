@@ -1,4 +1,5 @@
 require 'greenhouse_io/v3/base_client'
+require 'greenhouse_io/v3/base_token_manager'
 require 'greenhouse_io/v3/custom_token_manager'
 require 'greenhouse_io/v3/custom_client'
 require 'greenhouse_io/v3/partner_token_manager'

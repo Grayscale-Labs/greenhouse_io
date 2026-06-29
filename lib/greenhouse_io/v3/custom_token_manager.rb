@@ -1,14 +1,12 @@
-require 'httparty'
-require 'json'
-require 'base64'
-require 'time'
+require 'greenhouse_io/v3/base_token_manager'
 
 module GreenhouseIo
   module V3
-    class CustomTokenManager
-      AUTH_BASE_URI = "https://auth.greenhouse.io".freeze
-
-      attr_reader :client_id, :client_secret, :sub, :token_store
+    # Token manager for Custom Integrations. Uses the client_credentials
+    # grant (on behalf of `sub`), falling back to a fresh fetch when a
+    # refresh fails.
+    class CustomTokenManager < BaseTokenManager
+      attr_reader :sub
 
       def initialize(client_id:, client_secret:, sub:, token_store: {})
         @client_id = client_id
@@ -39,12 +37,6 @@ module GreenhouseIo
 
       private
 
-      def token_valid?
-        token_store[:access_token] &&
-          token_store[:expires_at] &&
-          Time.parse(token_store[:expires_at]) > Time.now + 30
-      end
-
       def fetch!
         response = post_token_request("grant_type" => "client_credentials", "sub" => sub)
         store_token_response(response)
@@ -58,30 +50,6 @@ module GreenhouseIo
         store_token_response(response)
       rescue GreenhouseIo::Error
         fetch!
-      end
-
-      def post_token_request(params)
-        response = HTTParty.post(
-          "#{AUTH_BASE_URI}/token",
-          body: params,
-          headers: { "Authorization" => "Basic #{encoded_credentials}" }
-        )
-
-        unless response.success?
-          raise GreenhouseIo::Error.new(response.body, response.code)
-        end
-
-        JSON.parse(response.body)
-      end
-
-      def store_token_response(response)
-        token_store[:access_token] = response["access_token"]
-        token_store[:refresh_token] = response["refresh_token"]
-        token_store[:expires_at] = response["expires_at"]
-      end
-
-      def encoded_credentials
-        Base64.strict_encode64("#{client_id}:#{client_secret}")
       end
     end
   end
