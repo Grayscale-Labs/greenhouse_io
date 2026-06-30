@@ -113,4 +113,73 @@ RSpec.describe GreenhouseIo::V3::PartnerTokenManager do
       end
     end
   end
+
+  describe "#access_token with a locking store" do
+    let(:locking_store) do
+      Class.new do
+        attr_reader :lock_calls, :reload_calls, :data
+        def initialize(data)
+          @data = data
+          @lock_calls = 0
+          @reload_calls = 0
+        end
+        def [](k)
+          @data[k]
+        end
+        def []=(k, v)
+          @data[k] = v
+        end
+        def with_refresh_lock
+          @lock_calls += 1
+          yield
+        end
+        def reload
+          @reload_calls += 1
+        end
+      end.new(store_data)
+    end
+
+    let(:manager) do
+      described_class.new(
+        client_id: "test_client_id",
+        client_secret: "test_client_secret",
+        token_store: locking_store
+      )
+    end
+
+    context "when token is expired" do
+      let(:store_data) do
+        { refresh_token: "stored_refresh_token", access_token: "old", expires_at: (Time.now - 60).iso8601 }
+      end
+
+      before do
+        stub_request(:post, "https://auth.greenhouse.io/token")
+          .with(body: { "grant_type" => "refresh_token", "refresh_token" => "stored_refresh_token" })
+          .to_return(
+            status: 200,
+            body: { access_token: "refreshed_token", refresh_token: "rotated", expires_at: (Time.now + 3600).iso8601 }.to_json,
+            headers: { "Content-Type" => "application/json" }
+          )
+      end
+
+      it "refreshes inside the lock and reloads first" do
+        expect(manager.access_token).to eq("refreshed_token")
+        expect(locking_store.lock_calls).to eq(1)
+        expect(locking_store.reload_calls).to eq(1)
+      end
+    end
+
+    context "when another process already refreshed (valid after reload)" do
+      let(:store_data) do
+        { refresh_token: "stored_refresh_token", access_token: "fresh", expires_at: (Time.now + 3600).iso8601 }
+      end
+
+      it "acquires the lock, reloads, and skips the HTTP refresh" do
+        manager.send(:refresh!)
+        expect(locking_store.lock_calls).to eq(1)
+        expect(locking_store.reload_calls).to eq(1)
+        expect(WebMock).not_to have_requested(:post, "https://auth.greenhouse.io/token")
+      end
+    end
+  end
 end

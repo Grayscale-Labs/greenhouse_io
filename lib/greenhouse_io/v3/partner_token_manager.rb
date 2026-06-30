@@ -36,7 +36,17 @@ module GreenhouseIo
           raise GreenhouseIo::ReauthorizationRequired.new("No refresh token available")
         end
 
-        request_refresh!
+        if token_store.respond_to?(:with_refresh_lock)
+          token_store.with_refresh_lock do
+            token_store.reload if token_store.respond_to?(:reload)
+            # Another process may have refreshed while we waited for the lock.
+            return if token_valid?
+
+            request_refresh!
+          end
+        else
+          request_refresh!
+        end
       end
 
       def request_refresh!
