@@ -37,10 +37,16 @@ module GreenhouseIo
         end
 
         if token_store.respond_to?(:with_refresh_lock)
+          # Snapshot the token we are superseding BEFORE waiting for the lock.
+          token_before = token_store[:access_token]
           token_store.with_refresh_lock do
             token_store.reload if token_store.respond_to?(:reload)
-            # Another process may have refreshed while we waited for the lock.
-            return if token_valid?
+            # Skip only if another process already replaced the token while we
+            # waited for the lock (stored access token changed AND is valid).
+            # We must NOT skip merely because token_valid? is true: a
+            # 401-driven force_refresh! arrives with an unexpired-but-rejected
+            # token and must actually refresh.
+            return if token_store[:access_token] != token_before && token_valid?
 
             request_refresh!
           end
