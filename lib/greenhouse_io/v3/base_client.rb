@@ -88,7 +88,7 @@ module GreenhouseIo
       def post_to_harvest_api(url, body, headers = {})
         response = post_response(url, {
           body: JSON.dump(body),
-          headers: bearer_auth_header.merge(headers)
+          headers: json_headers(headers)
         })
 
         set_headers_info(response.headers)
@@ -106,6 +106,42 @@ module GreenhouseIo
         else
           raise GreenhouseIo::Error.new(response.code)
         end
+      end
+
+      def patch_to_harvest_api(url, body, headers = {})
+        response = patch_response(url, {
+          body: JSON.dump(body),
+          headers: json_headers(headers)
+        })
+
+        set_headers_info(response.headers)
+
+        if response.success?
+          parse_json(response)
+        elsif response.code == 401 && !@token_refreshed_this_request
+          @token_refreshed_this_request = true
+          @token_manager.force_refresh!
+          begin
+            patch_to_harvest_api(url, body, headers)
+          ensure
+            @token_refreshed_this_request = false
+          end
+        else
+          raise GreenhouseIo::Error.new(response.code)
+        end
+      end
+
+      # Webhook management (partners-exclusive). See https://harvestdocs.greenhouse.io.
+      def list_webhooks(options = {})
+        get_from_harvest_api('/webhooks', options)
+      end
+
+      def create_webhook(attributes)
+        post_to_harvest_api('/webhooks', attributes)
+      end
+
+      def update_webhook(id, attributes)
+        patch_to_harvest_api("/webhooks#{path_id(id)}", attributes)
       end
 
       def with_retries(retry_options = { on: { GreenhouseIo::Error => RETRIABLE_ERRORS_REGEXP } })
@@ -129,6 +165,11 @@ module GreenhouseIo
 
       def bearer_auth_header
         { "Authorization" => "Bearer #{@token_manager.access_token}" }
+      end
+
+      # Bearer auth + JSON content type for write requests. An explicit header wins if supplied.
+      def json_headers(headers)
+        bearer_auth_header.merge("Content-Type" => "application/json").merge(headers)
       end
 
       def get_resource(resource_class, options, dehydrate_after_iteration: true)
