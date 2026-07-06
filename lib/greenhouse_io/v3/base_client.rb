@@ -86,62 +86,11 @@ module GreenhouseIo
       end
 
       def post_to_harvest_api(url, body, headers = {})
-        response = post_response(url, {
-          body: JSON.dump(body),
-          headers: json_headers(headers)
-        })
-
-        set_headers_info(response.headers)
-
-        if response.success?
-          parse_json(response)
-        elsif response.code == 401 && !@token_refreshed_this_request
-          @token_refreshed_this_request = true
-          @token_manager.force_refresh!
-          begin
-            post_to_harvest_api(url, body, headers)
-          ensure
-            @token_refreshed_this_request = false
-          end
-        else
-          raise GreenhouseIo::Error.new(response.code)
-        end
+        write_to_harvest_api(:post, url, body, headers)
       end
 
       def patch_to_harvest_api(url, body, headers = {})
-        response = patch_response(url, {
-          body: JSON.dump(body),
-          headers: json_headers(headers)
-        })
-
-        set_headers_info(response.headers)
-
-        if response.success?
-          parse_json(response)
-        elsif response.code == 401 && !@token_refreshed_this_request
-          @token_refreshed_this_request = true
-          @token_manager.force_refresh!
-          begin
-            patch_to_harvest_api(url, body, headers)
-          ensure
-            @token_refreshed_this_request = false
-          end
-        else
-          raise GreenhouseIo::Error.new(response.code)
-        end
-      end
-
-      # Webhook management (partners-exclusive). See https://harvestdocs.greenhouse.io.
-      def list_webhooks(options = {})
-        get_from_harvest_api('/webhooks', options)
-      end
-
-      def create_webhook(attributes)
-        post_to_harvest_api('/webhooks', attributes)
-      end
-
-      def update_webhook(id, attributes)
-        patch_to_harvest_api("/webhooks#{path_id(id)}", attributes)
+        write_to_harvest_api(:patch, url, body, headers)
       end
 
       def with_retries(retry_options = { on: { GreenhouseIo::Error => RETRIABLE_ERRORS_REGEXP } })
@@ -162,6 +111,31 @@ module GreenhouseIo
       private
 
       attr_accessor :using_with_retries
+
+      # Shared write path for POST/PATCH: JSON-encode the body, attach bearer + JSON headers, and
+      # refresh-and-retry once on a 401 (re-dispatching the same verb).
+      def write_to_harvest_api(verb, url, body, headers)
+        response = send("#{verb}_response", url, {
+          body: JSON.dump(body),
+          headers: json_headers(headers)
+        })
+
+        set_headers_info(response.headers)
+
+        if response.success?
+          parse_json(response)
+        elsif response.code == 401 && !@token_refreshed_this_request
+          @token_refreshed_this_request = true
+          @token_manager.force_refresh!
+          begin
+            write_to_harvest_api(verb, url, body, headers)
+          ensure
+            @token_refreshed_this_request = false
+          end
+        else
+          raise GreenhouseIo::Error.new(response.code)
+        end
+      end
 
       def bearer_auth_header
         { "Authorization" => "Bearer #{@token_manager.access_token}" }
