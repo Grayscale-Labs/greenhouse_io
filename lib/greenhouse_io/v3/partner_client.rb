@@ -18,6 +18,20 @@ module GreenhouseIo
           token_store: token_store
         )
       end
+
+      # Webhook management is exclusive to partner integrations, so it lives here rather than on
+      # BaseClient (custom-integration clients must not expose these). See https://harvestdocs.greenhouse.io.
+      def list_webhooks(options = {})
+        get_from_harvest_api('/webhooks', options)
+      end
+
+      def create_webhook(attributes)
+        post_to_harvest_api('/webhooks', attributes)
+      end
+
+      def update_webhook(id, attributes)
+        patch_to_harvest_api("/webhooks#{path_id(id)}", attributes)
+      end
     end
   end
 end

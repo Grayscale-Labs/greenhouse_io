@@ -86,26 +86,11 @@ module GreenhouseIo
       end
 
       def post_to_harvest_api(url, body, headers = {})
-        response = post_response(url, {
-          body: JSON.dump(body),
-          headers: bearer_auth_header.merge(headers)
-        })
+        write_to_harvest_api(:post, url, body, headers)
+      end
 
-        set_headers_info(response.headers)
-
-        if response.success?
-          parse_json(response)
-        elsif response.code == 401 && !@token_refreshed_this_request
-          @token_refreshed_this_request = true
-          @token_manager.force_refresh!
-          begin
-            post_to_harvest_api(url, body, headers)
-          ensure
-            @token_refreshed_this_request = false
-          end
-        else
-          raise GreenhouseIo::Error.new(response.code)
-        end
+      def patch_to_harvest_api(url, body, headers = {})
+        write_to_harvest_api(:patch, url, body, headers)
       end
 
       def with_retries(retry_options = { on: { GreenhouseIo::Error => RETRIABLE_ERRORS_REGEXP } })
@@ -127,8 +112,38 @@ module GreenhouseIo
 
       attr_accessor :using_with_retries
 
+      # Shared write path for POST/PATCH: JSON-encode the body, attach bearer + JSON headers, and
+      # refresh-and-retry once on a 401 (re-dispatching the same verb).
+      def write_to_harvest_api(verb, url, body, headers)
+        response = send("#{verb}_response", url, {
+          body: JSON.dump(body),
+          headers: json_headers(headers)
+        })
+
+        set_headers_info(response.headers)
+
+        if response.success?
+          parse_json(response)
+        elsif response.code == 401 && !@token_refreshed_this_request
+          @token_refreshed_this_request = true
+          @token_manager.force_refresh!
+          begin
+            write_to_harvest_api(verb, url, body, headers)
+          ensure
+            @token_refreshed_this_request = false
+          end
+        else
+          raise GreenhouseIo::Error.new(response.code)
+        end
+      end
+
       def bearer_auth_header
         { "Authorization" => "Bearer #{@token_manager.access_token}" }
+      end
+
+      # Bearer auth + JSON content type for write requests. An explicit header wins if supplied.
+      def json_headers(headers)
+        bearer_auth_header.merge("Content-Type" => "application/json").merge(headers)
       end
 
       def get_resource(resource_class, options, dehydrate_after_iteration: true)
