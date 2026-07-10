@@ -49,6 +49,25 @@ RSpec.describe GreenhouseIo::V3::CustomClient do
     end
   end
 
+  describe "#interviews" do
+    it "returns an InterviewCollection" do
+      result = client.interviews
+      expect(result).to be_a(GreenhouseIo::InterviewCollection)
+    end
+
+    # Regression guard: v3 interviews must hit /v3/interviews, NOT v1's /scheduled_interviews.
+    #   The shared v1 ScheduledInterviewCollection defaults to /scheduled_interviews, which 404s on v3.
+    it "requests the v3 /interviews endpoint" do
+      stub = stub_request(:get, "https://harvest.greenhouse.io/v3/interviews?per_page=1")
+        .with(headers: { "Authorization" => "Bearer test_bearer_token" })
+        .to_return(status: 200, body: JSON.dump([{ "id" => 1 }]), headers: default_response_headers)
+
+      client.interviews(per_page: 1).first
+
+      expect(stub).to have_been_requested
+    end
+  end
+
   describe "#get_from_harvest_api" do
     context "successful request" do
       it "makes a GET with Bearer auth" do
