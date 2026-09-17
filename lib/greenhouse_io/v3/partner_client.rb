@@ -10,8 +10,8 @@ module GreenhouseIo
     # PartnerTokenManager. There is no `sub`, and token_store is required
     # since Partner clients always need persisted tokens.
     class PartnerClient < BaseClient
-      def initialize(client_id:, client_secret:, token_store:)
-        super()
+      def initialize(client_id:, client_secret:, token_store:, on_rate_limit_budget: nil)
+        super(on_rate_limit_budget: on_rate_limit_budget)
         @token_manager = PartnerTokenManager.new(
           client_id: client_id,
           client_secret: client_secret,

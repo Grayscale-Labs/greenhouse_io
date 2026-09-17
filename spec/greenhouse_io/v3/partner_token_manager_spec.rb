@@ -112,6 +112,23 @@ RSpec.describe GreenhouseIo::V3::PartnerTokenManager do
         expect { manager.force_refresh! }.to raise_error(GreenhouseIo::ReauthorizationRequired)
       end
     end
+
+    context "when throttled" do
+      before do
+        token_store[:refresh_token] = "stored_refresh_token"
+
+        stub_request(:post, "https://auth.greenhouse.io/token")
+          .to_return(status: 429, body: "Retry later",
+                     headers: { "Retry-After" => "47", "X-RateLimit-Remaining" => "0" })
+      end
+
+      it "preserves the status and the response headers" do
+        expect { manager.force_refresh! }.to raise_error(GreenhouseIo::ReauthorizationRequired) { |e|
+          expect(e.code).to eq(429)
+          expect(e.headers["retry-after"]).to eq("47")
+        }
+      end
+    end
   end
 
   describe "#access_token with a locking store" do

@@ -33,7 +33,7 @@ module GreenhouseIo
         )
 
         unless response.success?
-          raise GreenhouseIo::Error.new(response.body, response.code)
+          raise GreenhouseIo::Error.new(response.body, response.code, headers: response.headers)
         end
 
         JSON.parse(response.body)

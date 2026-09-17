@@ -62,7 +62,7 @@ module GreenhouseIo
         )
         store_token_response(response)
       rescue GreenhouseIo::Error => e
-        raise GreenhouseIo::ReauthorizationRequired.new(e.message, e.code)
+        raise GreenhouseIo::ReauthorizationRequired.new(e.message, e.code, headers: e.headers)
       end
     end
   end

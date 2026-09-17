@@ -9,8 +9,8 @@ module GreenhouseIo
     # client_credentials grant (on behalf of `sub`), with refresh-token
     # fallback handled by CustomTokenManager.
     class CustomClient < BaseClient
-      def initialize(client_id:, client_secret:, sub:, token_store: {})
-        super()
+      def initialize(client_id:, client_secret:, sub:, token_store: {}, on_rate_limit_budget: nil)
+        super(on_rate_limit_budget: on_rate_limit_budget)
         @token_manager = CustomTokenManager.new(
           client_id: client_id,
           client_secret: client_secret,

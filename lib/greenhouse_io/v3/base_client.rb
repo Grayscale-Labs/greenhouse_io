@@ -21,12 +21,16 @@ module GreenhouseIo
 
       RETRIABLE_ERRORS_REGEXP = /\A5\d\d\z/x.freeze
 
-      attr_accessor :rate_limit, :rate_limit_remaining, :link
+      BUDGET_HEADERS = %w[x-ratelimit-limit x-ratelimit-remaining x-ratelimit-reset].freeze
+
+      attr_accessor :rate_limit, :rate_limit_remaining, :rate_limit_reset, :link
 
       base_uri 'https://harvest.greenhouse.io/v3'
 
-      def initialize
+      # Collections page internally, so a consumer cannot read the accessors above between requests.
+      def initialize(on_rate_limit_budget: nil)
         @token_refreshed_this_request = false
+        @on_rate_limit_budget = on_rate_limit_budget
         self.using_with_retries = false
       end
 
@@ -81,7 +85,7 @@ module GreenhouseIo
             @token_refreshed_this_request = false
           end
         else
-          raise GreenhouseIo::Error.new(response.code)
+          raise GreenhouseIo::Error.new(response.code, nil, headers: response.headers)
         end
       end
 
@@ -133,7 +137,7 @@ module GreenhouseIo
             @token_refreshed_this_request = false
           end
         else
-          raise GreenhouseIo::Error.new(response.code)
+          raise GreenhouseIo::Error.new(response.code, nil, headers: response.headers)
         end
       end
 
@@ -163,7 +167,20 @@ module GreenhouseIo
       def set_headers_info(headers)
         self.rate_limit = headers['x-ratelimit-limit'].to_i
         self.rate_limit_remaining = headers['x-ratelimit-remaining'].to_i
+        self.rate_limit_reset = headers['x-ratelimit-reset'].to_i
         self.link = headers['link'].to_s
+        report_rate_limit_budget(headers)
+      end
+
+      # Reporting a partial budget is worse than reporting none, since the zeroed keys read as real.
+      def report_rate_limit_budget(headers)
+        return if @on_rate_limit_budget.nil?
+        return if BUDGET_HEADERS.any? { |name| headers[name].to_s.empty? }
+
+        @on_rate_limit_budget.call(limit: rate_limit, remaining: rate_limit_remaining, reset_at: rate_limit_reset)
+      rescue StandardError => e
+        # Reporting is advisory, so a fault in the consumer's callback must not fail a live request.
+        warn("GreenhouseIo: on_rate_limit_budget raised #{e.class}: #{e.message}")
       end
 
       def normalize_options(options)
