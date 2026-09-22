@@ -20,4 +20,34 @@ describe GreenhouseIo::Error do
 
   end
 
+  describe "#headers" do
+    it "defaults to an empty hash" do
+      expect(GreenhouseIo::Error.new("boom").headers).to eq({})
+      expect(GreenhouseIo::Error.new("boom", 500, headers: nil).headers).to eq({})
+    end
+
+    it "downcases keys" do
+      error = GreenhouseIo::Error.new("429", nil, headers: { "Retry-After" => "30" })
+
+      expect(error.headers["retry-after"]).to eq("30")
+    end
+
+    it "joins a header that arrived more than once" do
+      error = GreenhouseIo::Error.new("429", nil, headers: { "set-cookie" => %w[a=1 b=2] })
+
+      expect(error.headers["set-cookie"]).to eq("a=1, b=2")
+    end
+
+    it "ignores a value that does not convert to a hash" do
+      expect(GreenhouseIo::Error.new("500", nil, headers: "not headers").headers).to eq({})
+    end
+
+    it "is preserved when re-raised as ReauthorizationRequired" do
+      error = GreenhouseIo::ReauthorizationRequired.new("Retry later", 429, headers: { "Retry-After" => "47" })
+
+      expect(error.code).to eq(429)
+      expect(error.headers["retry-after"]).to eq("47")
+    end
+  end
+
 end

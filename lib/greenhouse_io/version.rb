@@ -1,3 +1,3 @@
 module GreenhouseIo
-  VERSION = "3.8.5-grayscale"
+  VERSION = "3.8.6-grayscale"
 end

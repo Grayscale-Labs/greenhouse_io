@@ -207,6 +207,49 @@ client.applications
 
 The client automatically refreshes the token on 401 responses and retries the request.
 
+#### Rate Limits
+
+After a request, the budget Greenhouse reported is available on the client. `rate_limit_reset` is a
+Unix timestamp, not a number of seconds:
+
+```ruby
+client.rate_limit            # => 150
+client.rate_limit_remaining  # => 148
+client.rate_limit_reset      # => 1756285800
+```
+
+Collections are paged internally, so a caller iterating one has no point at which to read those
+accessors between requests. Pass `on_rate_limit_budget` to be handed the budget after each Harvest
+response instead:
+
+```ruby
+client = GreenhouseIo::V3::Client.new(
+  client_id: "...",
+  client_secret: "...",
+  sub: "12345",
+  on_rate_limit_budget: ->(limit:, remaining:, reset_at:) { throttle_if_low(remaining, reset_at) }
+)
+```
+
+The callback fires on rejected responses as well as successful ones, and is skipped unless the
+response carries all three rate limit headers, so `remaining: 0` always means the budget really is
+spent. A `StandardError` raised from the callback is reported to stderr rather than propagated, so an
+ordinary bug in it cannot fail a request Greenhouse already accepted.
+
+The OAuth token endpoint is metered on its own budget, which this callback does not report. That
+budget is visible only on the headers of an error it raises.
+
+When Greenhouse rejects a request, the response headers are carried on the raised error. Keys are
+downcased, so look them up in lowercase:
+
+```ruby
+begin
+  client.jobs.to_a
+rescue GreenhouseIo::Error => e
+  e.headers["retry-after"] # => "30"
+end
+```
+
 #### Token Store
 
 By default, tokens are stored in an in-memory hash (lost on restart). For production use, pass a `token_store` that implements `[]` and `[]=`:
