@@ -161,4 +161,51 @@ RSpec.describe GreenhouseIo::V3::PartnerClient do
       end
     end
   end
+
+  describe "injected token_manager" do
+    let(:token_manager) do
+      Class.new do
+        attr_reader :forced
+
+        def access_token
+          "injected_bearer_token"
+        end
+
+        def force_refresh!
+          @forced = true
+        end
+      end.new
+    end
+
+    let(:client) { described_class.new(token_manager: token_manager) }
+
+    it "authorizes with the injected manager and builds no PartnerTokenManager" do
+      stub = stub_request(:get, "https://harvest.greenhouse.io/v3/jobs")
+             .with(headers: { "Authorization" => "Bearer injected_bearer_token" })
+             .to_return(status: 200, body: JSON.dump(jobs_response_body), headers: default_response_headers)
+
+      expect(GreenhouseIo::V3::PartnerTokenManager).not_to receive(:new)
+      client.jobs.to_a
+
+      expect(stub).to have_been_requested
+    end
+
+    it "asks it to refresh after a 401" do
+      stub_request(:get, "https://harvest.greenhouse.io/v3/jobs")
+        .to_return({ status: 401, body: "401", headers: default_response_headers },
+                   { status: 200, body: JSON.dump(jobs_response_body), headers: default_response_headers })
+
+      client.jobs.to_a
+
+      expect(token_manager.forced).to be(true)
+    end
+
+    it "still accepts the token_store form" do
+      expect { described_class.new(client_id: "id", client_secret: "secret", token_store: {}) }.not_to raise_error
+    end
+
+    it "rejects a partial token_store form" do
+      expect { described_class.new(client_id: "id") }.to raise_error(ArgumentError, /token_manager/)
+    end
+  end
 end
