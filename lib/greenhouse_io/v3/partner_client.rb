@@ -6,13 +6,22 @@ require 'greenhouse_io/v3/partner_token_manager'
 module GreenhouseIo
   module V3
     # Client for Greenhouse Partner Integrations. Authenticates via the
-    # OAuth 2.0 Authorization Code Grant, with refresh handled by
-    # PartnerTokenManager. There is no `sub`, and token_store is required
-    # since Partner clients always need persisted tokens.
+    # OAuth 2.0 Authorization Code Grant. There is no `sub`, and tokens are
+    # always persisted -- either by an injected token_manager or by the
+    # built-in PartnerTokenManager over a token_store.
     class PartnerClient < BaseClient
-      def initialize(client_id:, client_secret:, token_store:, on_rate_limit_budget: nil)
+      # Pass `token_manager:` to own the token lifecycle yourself; it need only
+      # respond to #access_token and #force_refresh!. Omit it to keep the
+      # built-in PartnerTokenManager + token_store behavior.
+      def initialize(client_id: nil, client_secret: nil, token_store: nil, token_manager: nil,
+                     on_rate_limit_budget: nil)
         super(on_rate_limit_budget: on_rate_limit_budget)
-        @token_manager = PartnerTokenManager.new(
+
+        if token_manager.nil? && [client_id, client_secret, token_store].any?(&:nil?)
+          raise ArgumentError, 'pass token_manager:, or all of client_id:, client_secret: and token_store:'
+        end
+
+        @token_manager = token_manager || PartnerTokenManager.new(
           client_id: client_id,
           client_secret: client_secret,
           token_store: token_store

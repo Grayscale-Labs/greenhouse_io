@@ -22,8 +22,12 @@ module GreenhouseIo
     end
   end
 
-  # Raised when a Partner refresh token is expired or invalid (24-hour TTL
-  # passed, already used, or revoked). Signals to the consumer that the user
-  # must re-authorize through the Greenhouse OAuth consent flow.
+  # Raised when a Partner refresh token is expired or invalid (unused for 14 days,
+  # already exchanged, or revoked). Signals to the consumer that the user must
+  # re-authorize through the Greenhouse OAuth consent flow.
+  #
+  # NOTE: PartnerTokenManager currently raises this for *every* token-endpoint
+  # failure, including 429s and 5xx. Do not treat it as proof that the grant is
+  # dead -- check #code.
   class ReauthorizationRequired < Error; end
 end
